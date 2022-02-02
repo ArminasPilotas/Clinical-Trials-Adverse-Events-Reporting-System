@@ -1,0 +1,83 @@
+﻿@page "/Delete/{Id}"
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+@inject ClassifierService classifierService
+@inject NavigationManager NavigationManager
+
+<h3>Are you sure want to delete this?</h3>
+<hr />
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>Classifier Id:</label>
+                <label>@classifier.Id</label>
+            </div>
+
+            <div class="form-group">
+                <label>Reporting Type:</label>
+                <label>@classifier.ReportingType</label>
+            </div>
+
+            <div class="form-group">
+                <label>Report Type:</label>
+                <label>@classifier.ReportType</label>
+            </div>
+
+            <div class="form-group">
+                <label>Reporting Type:</label>
+                <label>@classifier.ReportingMethod</label>
+            </div>
+
+            <div class="form-group">
+                <label>Institution Type:</label>
+                <label>@classifier.InstitutionType</label>
+            </div>
+
+            <div class="form-group">
+                <label>Susar Type:</label>
+                <label>@classifier.SusarType</label>
+            </div>
+
+            <div class="form-group">
+                <label>Case Origin:</label>
+                <label>@classifier.CaseOrigin</label>
+            </div>
+
+            <div class="form-group">
+                <label>Investigational Product Type:</label>
+                <label>@classifier.InvestigationalProductType</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-danger" @onclick="@DeleteClassifierObj" value="Delete" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    Entities.Classifier classifier = new Entities.Classifier();
+
+    protected override async Task OnInitializedAsync()
+    {
+        classifier = await Task.Run(() => classifierService.GetClassifierAsync(Convert.ToInt32(Id)));
+    }
+
+    protected async void DeleteClassifierObj()
+    {
+        await classifierService.DeleteClassifierAsync(classifier);
+        NavigationManager.NavigateTo("Classifiers List");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Classifiers List");
+    }
+
+}
