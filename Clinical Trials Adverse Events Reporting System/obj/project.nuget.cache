@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "vfEj2pBfMrMW4orhtZkjLfJVHCbRFJc/+lq0RX4DjXfKSEiAQ8N60IkyT3fCpL7ETLzXBuEyEvwuj7bXOTyKJg==",
+  "dgSpecHash": "hq6X1WNFs2STcE22NJyVa09iAIRSJbFuD9cLd8cQ93US1rRV07rTOs+gvyZMnDItJ6Twr3snLJORXIQH+nIQLg==",
   "success": true,
   "projectFilePath": "C:\\Users\\armin\\source\\repos\\Clinical Trials Adverse Events Reporting System\\Clinical Trials Adverse Events Reporting System\\Clinical Trials Adverse Events Reporting System.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\armin\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
+    "C:\\Users\\armin\\.nuget\\packages\\microsoft.aspnetcore.authentication.negotiate\\3.1.22\\microsoft.aspnetcore.authentication.negotiate.3.1.22.nupkg.sha512",
+    "C:\\Users\\armin\\.nuget\\packages\\microsoft.aspnetcore.connections.abstractions\\3.1.22\\microsoft.aspnetcore.connections.abstractions.3.1.22.nupkg.sha512",
+    "C:\\Users\\armin\\.nuget\\packages\\microsoft.aspnetcore.http.features\\3.1.22\\microsoft.aspnetcore.http.features.3.1.22.nupkg.sha512",
     "C:\\Users\\armin\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\armin\\.nuget\\packages\\microsoft.data.sqlclient\\2.0.1\\microsoft.data.sqlclient.2.0.1.nupkg.sha512",
     "C:\\Users\\armin\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\2.0.1\\microsoft.data.sqlclient.sni.runtime.2.0.1.nupkg.sha512",
@@ -58,6 +61,7 @@
     "C:\\Users\\armin\\.nuget\\packages\\system.io\\4.3.0\\system.io.4.3.0.nupkg.sha512",
     "C:\\Users\\armin\\.nuget\\packages\\system.io.filesystem\\4.3.0\\system.io.filesystem.4.3.0.nupkg.sha512",
     "C:\\Users\\armin\\.nuget\\packages\\system.io.filesystem.primitives\\4.3.0\\system.io.filesystem.primitives.4.3.0.nupkg.sha512",
+    "C:\\Users\\armin\\.nuget\\packages\\system.io.pipelines\\4.7.4\\system.io.pipelines.4.7.4.nupkg.sha512",
     "C:\\Users\\armin\\.nuget\\packages\\system.linq\\4.3.0\\system.linq.4.3.0.nupkg.sha512",
     "C:\\Users\\armin\\.nuget\\packages\\system.linq.expressions\\4.3.0\\system.linq.expressions.4.3.0.nupkg.sha512",
     "C:\\Users\\armin\\.nuget\\packages\\system.net.nameresolution\\4.3.0\\system.net.nameresolution.4.3.0.nupkg.sha512",

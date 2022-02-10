@@ -4,7 +4,7 @@
 #pragma warning disable 0649
 #pragma warning disable 0169
 
-namespace Clinical_Trials_Adverse_Events_Reporting_System.Pages
+namespace Clinical_Trials_Adverse_Events_Reporting_System.Pages.Classifiers
 {
     #line hidden
     using System;
@@ -76,14 +76,21 @@ using Clinical_Trials_Adverse_Events_Reporting_System.Shared;
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\ClassifiersList.razor"
+#line 2 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\SusarTypeList.razor"
+using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 3 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\SusarTypeList.razor"
 using Clinical_Trials_Adverse_Events_Reporting_System.Data;
 
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/Classifiers List")]
-    public partial class ClassifiersList : Microsoft.AspNetCore.Components.ComponentBase
+    [Microsoft.AspNetCore.Components.RouteAttribute("/Classifiers/SusarType/Index")]
+    public partial class SusarTypeList : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -91,19 +98,20 @@ using Clinical_Trials_Adverse_Events_Reporting_System.Data;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 59 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\ClassifiersList.razor"
-           
-        List<Entities.Classifier> ClassifiersObj;
+#line 59 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\SusarTypeList.razor"
+       
+    List<SusarType> classifiers;
 
-        protected override async Task OnInitializedAsync()
-        {
-            ClassifiersObj = await Task.Run(() => classifierService.GetAllClassifiersAsync());
-        }
+    protected override async Task OnInitializedAsync()
+    {
+        classifiers = await Task.Run(() => classifierRepository.GetAll());
+    }
+
 
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClassifierService classifierService { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IClassifierRepository<SusarType> classifierRepository { get; set; }
     }
 }
 #pragma warning restore 1591

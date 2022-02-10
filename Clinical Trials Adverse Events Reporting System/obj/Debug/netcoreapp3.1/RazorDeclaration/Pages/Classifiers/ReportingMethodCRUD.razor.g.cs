@@ -4,7 +4,7 @@
 #pragma warning disable 0649
 #pragma warning disable 0169
 
-namespace Clinical_Trials_Adverse_Events_Reporting_System.Pages
+namespace Clinical_Trials_Adverse_Events_Reporting_System.Pages.Classifiers
 {
     #line hidden
     using System;
@@ -76,14 +76,22 @@ using Clinical_Trials_Adverse_Events_Reporting_System.Shared;
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\DeleteClassifier.razor"
+#line 4 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\ReportingMethodCRUD.razor"
 using Clinical_Trials_Adverse_Events_Reporting_System.Data;
 
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/Delete/{Id}")]
-    public partial class DeleteClassifier : Microsoft.AspNetCore.Components.ComponentBase
+#nullable restore
+#line 5 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\ReportingMethodCRUD.razor"
+using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
+
+#line default
+#line hidden
+#nullable disable
+    [Microsoft.AspNetCore.Components.RouteAttribute("/ReportingMethod/{Action}")]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/ReportingMethod/{Action}/{Id}")]
+    public partial class ReportingMethodCRUD : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -91,33 +99,60 @@ using Clinical_Trials_Adverse_Events_Reporting_System.Data;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 63 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\DeleteClassifier.razor"
+#line 52 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\ReportingMethodCRUD.razor"
        
     [Parameter]
+    public string Action { get; set; }
+    [Parameter]
     public string Id { get; set; }
-    Entities.Classifier classifier = new Entities.Classifier();
+
+    ReportingMethod classifier = new ReportingMethod();
+
 
     protected override async Task OnInitializedAsync()
     {
-        classifier = await Task.Run(() => classifierService.GetClassifierAsync(Convert.ToInt32(Id)));
+        if (Action == "Edit" || Action == "Delete")
+        {
+            classifier = await Task.Run(() => classifierRepository.GetById(Convert.ToInt32(Id)));
+        }
+        if (Action == "Delete")
+        {
+            DeleteClassifier();
+        }
     }
 
-    protected async void DeleteClassifierObj()
+    protected async void UpdateClassifier()
     {
-        await classifierService.DeleteClassifierAsync(classifier);
-        NavigationManager.NavigateTo("Classifiers List");
-    }
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("Classifiers List");
+        classifier.Modified = DateTime.UtcNow;
+        await classifierRepository.Update(classifier);
+        NavigationManager.NavigateTo("Classifiers/ReportingMethod/Index");
     }
 
+    protected async void CreateClassifier()
+    {
+        classifier.Created = DateTime.UtcNow;
+        classifier.Modified = DateTime.UtcNow;
+        await classifierRepository.Create(classifier);
+        NavigationManager.NavigateTo("Classifiers/ReportingMethod/Index");
+    }
+
+    protected async void DeleteClassifier()
+    {
+        await classifierRepository.Delete(classifier);
+        NavigationManager.NavigateTo("Classifiers/ReportingMethod/Index");
+    }
+
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("Classifiers/ReportingMethod/Index");
+    }
 
 #line default
 #line hidden
 #nullable disable
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavigationManager { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClassifierService classifierService { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IClassifierRepository<ReportingMethod> classifierRepository { get; set; }
     }
 }
 #pragma warning restore 1591

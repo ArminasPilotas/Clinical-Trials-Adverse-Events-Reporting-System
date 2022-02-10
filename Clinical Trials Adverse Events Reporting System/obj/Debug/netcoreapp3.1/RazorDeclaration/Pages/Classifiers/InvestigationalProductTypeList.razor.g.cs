@@ -4,7 +4,7 @@
 #pragma warning disable 0649
 #pragma warning disable 0169
 
-namespace Clinical_Trials_Adverse_Events_Reporting_System.Pages
+namespace Clinical_Trials_Adverse_Events_Reporting_System.Pages.Classifiers
 {
     #line hidden
     using System;
@@ -75,8 +75,22 @@ using Clinical_Trials_Adverse_Events_Reporting_System.Shared;
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/Add Classifier")]
-    public partial class AddClassifier : Microsoft.AspNetCore.Components.ComponentBase
+#nullable restore
+#line 2 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\InvestigationalProductTypeList.razor"
+using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 3 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\InvestigationalProductTypeList.razor"
+using Clinical_Trials_Adverse_Events_Reporting_System.Data;
+
+#line default
+#line hidden
+#nullable disable
+    [Microsoft.AspNetCore.Components.RouteAttribute("/Classifiers/InvestigationalProductType/Index")]
+    public partial class InvestigationalProductTypeList : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -84,25 +98,20 @@ using Clinical_Trials_Adverse_Events_Reporting_System.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 67 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\AddClassifier.razor"
+#line 59 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Pages\Classifiers\InvestigationalProductTypeList.razor"
        
-    Entities.Classifier classifier = new Entities.Classifier();
+    List<InvestigationalProductType> classifiers;
 
-    protected async void CreateClassifier()
+    protected override async Task OnInitializedAsync()
     {
-        await classifierService.InsertClassifierAsync(classifier);
-        NavigationManager.NavigateTo("Classifiers List");
+        classifiers = await Task.Run(() => classifierRepository.GetAll());
     }
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("Classifiers List");
-    }
+
 
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavigationManager { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Data.ClassifierService classifierService { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IClassifierRepository<InvestigationalProductType> classifierRepository { get; set; }
     }
 }
 #pragma warning restore 1591

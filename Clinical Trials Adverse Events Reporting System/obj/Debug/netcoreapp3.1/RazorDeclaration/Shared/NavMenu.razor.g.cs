@@ -83,7 +83,7 @@ using Clinical_Trials_Adverse_Events_Reporting_System.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 18 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Shared\NavMenu.razor"
+#line 54 "C:\Users\armin\source\repos\Clinical Trials Adverse Events Reporting System\Clinical Trials Adverse Events Reporting System\Shared\NavMenu.razor"
        
     private bool collapseNavMenu = true;
 

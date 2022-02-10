@@ -1,4 +1,5 @@
 using Clinical_Trials_Adverse_Events_Reporting_System.Data;
+using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -29,8 +30,8 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<ClassifierService>();
             services.AddDbContext<Entities.CTAERS>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
+            services.AddScoped(typeof(IClassifierRepository<>), typeof(ClassifierRepository<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
