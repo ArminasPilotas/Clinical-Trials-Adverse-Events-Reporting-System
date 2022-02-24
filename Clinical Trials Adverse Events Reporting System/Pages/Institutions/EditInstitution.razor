@@ -1,0 +1,168 @@
+﻿@page "/{Country}/Institution/Edit/{Id}"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+
+@if (institution is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+<form>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Institution Name</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.Name" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Institution Type</label>
+        <div class="col-sm-10">
+            @if (institutionTypes != null)
+            {
+                <select class="form-control" @bind="institutionTypeId">
+                    @foreach (var institutionType in institutionTypes)
+                    {
+                            <option value="@institutionType.Id">@institutionType.Name</option>
+                    }
+                </select>
+            }
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Address</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.Address" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Phone</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.Phone" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Fax</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.Fax" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.Email" />
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Alternate Address</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.AlternateAddress" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Alternate Phone</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.AlternatePhone" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Alternate Fax</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.AlternateFax" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Alternate Email</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.AlternateEmail" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">City</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.City" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Registration Number</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.RegNo" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Modify Reason</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.ModifyReason" />
+        </div>
+    </div>
+
+
+
+    <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="UpdateInstitution">Update</button>
+    </div>
+
+    <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
+    </div>
+</form>
+}
+
+@code {
+    [Parameter]
+    public string Country { get; set; }
+    [Parameter]
+    public string Id { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    [Inject]
+    InstitutionRepository institutionRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
+
+    Institution institution = new Institution();
+    List<InstitutionType> institutionTypes;
+
+    public int investigationalProductTypeId { get; set; }
+    public int institutionTypeId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        institution = await Task.Run(() => institutionRepository.GetById(Convert.ToInt32(Id)));
+        institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
+        institutionTypeId = institution.InstitutionType.Id;
+    }
+
+    protected async void UpdateInstitution()
+    {
+        InstitutionType institutionType = await institutionTypeRepository.GetById(institutionTypeId);
+        if (institution.InstitutionType.Id != institutionType.Id)
+        {
+            institution.InstitutionType = institutionType;
+        }
+        institution.Modified = DateTime.UtcNow;
+        await institutionRepository.Update(institution);
+        NavigationManager.NavigateTo($"{Country}/Institution/Index");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo($"{Country}/Institution/Index");
+    }
+}

@@ -1,0 +1,59 @@
+﻿@page "/Countries/Index"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+
+@inject CountryRepository countryRepository
+
+    @if(countries is null){
+    <p><em>Loading...</em></p>
+     }
+            else
+            {
+
+        <h2>(TODO) Add Search Engine</h2>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Country</th>
+                    <th scope="col">Abbrevation</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach(var country in countries)
+                {
+                    <tr>
+                        <td>@country.Name</td>
+                        <td>@country.Abbreviation</td>
+                        <td>
+                            <a class="nav-link" href="@country.Name/Institution/Index">
+                                <span class="oi oi-list" aria-hidden="true">View Institutions</span>
+                            </a>
+
+                            <a class="nav-link" href="@country.Name/Authorities/Index">
+                                <span class="oi oi-list" aria-hidden="true">Manage Authorities</span>
+                            </a>
+
+                            <a class="nav-link" href="@country.Name/NationalRequirements/Index">
+                                <span class="oi oi-list" aria-hidden="true">View Requirements</span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+            }
+
+
+@code {
+
+    public List<Country> countries { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        countries = await Task.Run(() => countryRepository.GetAll());
+    }
+}

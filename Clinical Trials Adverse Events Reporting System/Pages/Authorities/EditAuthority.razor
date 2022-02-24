@@ -1,0 +1,116 @@
+﻿@page "/{Country}/Authority/Edit/{Id}"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+
+@if (authority is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <form>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Institution</label>
+            <div class="col-sm-10">
+                <select class="form-control" @bind="InstitutionId">
+                    @if (institutions != null)
+                    {
+                        @foreach (var institution in institutions)
+                        {
+                            <option value="@institution.Id">@institution.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Investigational Product Type</label>
+            <div class="col-sm-10">
+                <select class="form-control" @bind="IpTypeId">
+                    @if (investigationalProductTypes != null)
+                    {
+                        @foreach (var investigationalProductType in investigationalProductTypes)
+                        {
+                            <option value="@investigationalProductType.Id">@investigationalProductType.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Institution Type</label>
+            <div class="col-sm-10">
+                <select class="form-control" @bind="InstitutionTypeId">
+                    @if (institutionTypes != null)
+                    {
+                        @foreach (var institutionType in institutionTypes)
+                        {
+                            <option value="@institutionType.Id">@institutionType.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-12 text-center">
+            <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="UpdateAuthority">Update</button>
+        </div>
+
+        <div class="col-md-12 text-center">
+            <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
+        </div>
+
+    </form>
+}
+
+@code {
+    [Parameter]
+    public string Country { get; set; }
+    [Parameter]
+    public string Id { get; set; }
+    [Inject]
+    AuthorityRepository authorityRepository { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    [Inject]
+    IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
+    [Inject]
+    InstitutionRepository institutionRepository { get; set; }
+
+    public List<Institution> institutions { get; set; }
+    public List<InvestigationalProductType> investigationalProductTypes { get; set; }
+    public List<InstitutionType> institutionTypes { get; set; }
+
+    public int InstitutionId { get; set; }
+    public int IpTypeId { get; set; }
+    public int InstitutionTypeId { get; set; }
+
+    public Authority authority { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authority = await Task.Run(() => authorityRepository.GetById(Convert.ToInt32(Id)));
+        institutions = await Task.Run(() => institutionRepository.GetByCountry(Country));
+        investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
+        institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
+        InstitutionId = authority.Institution.Id;
+        IpTypeId = authority.InvestigationalProductType.Id;
+        InstitutionTypeId = authority.InstitutionType.Id;
+    }
+
+    protected async void UpdateAuthority()
+    {
+
+        NavigationManager.NavigateTo($"{Country}/Authorities/Index");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo($"{Country}/Authorities/Index");
+    }
+}

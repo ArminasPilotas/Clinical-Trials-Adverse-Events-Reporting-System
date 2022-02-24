@@ -27,6 +27,10 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Entities
         public DbSet<SusarType> SusarTypes { get; set; }
         public DbSet<CaseOrigin> CaseOrigins { get; set; }
         public DbSet<InvestigationalProductType> InvestigationalProductTypes { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<Institution> Institutions { get; set; }
+        public DbSet<NationalRequirement> NationalRequirements { get; set; }
+        public DbSet<Authority> Authorities { get; set; }
     }
 
 }

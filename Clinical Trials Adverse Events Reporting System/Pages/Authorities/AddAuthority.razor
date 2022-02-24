@@ -1,0 +1,114 @@
+﻿@page "/{Country}/Authority/Add"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities 
+
+<form>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Institution</label>
+        <div class="col-sm-10">
+            <select class="form-control" @bind="institutionId">
+                <option selected>Choose</option>
+                @if (institutions != null)
+                {
+                    @foreach (var institution in institutions)
+                    {
+                        <option value="@institution.Id">@institution.Name</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Investigational Product Type</label>
+        <div class="col-sm-10">
+            <select class="form-control" @bind="IPTypeId">
+                <option selected>Choose</option>
+                @if (investigationalProductTypes != null)
+                {
+                    @foreach (var investigationalProductType in investigationalProductTypes)
+                    {
+                        <option value="@investigationalProductType.Id">@investigationalProductType.Name</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Institution Type</label>
+        <div class="col-sm-10">
+            <select class="form-control" @bind="InstitutionTypeId">
+                <option selected>Choose</option>
+                @if (institutionTypes != null)
+                {
+                    @foreach (var institutionType in institutionTypes)
+                    {
+                        <option value="@institutionType.Id">@institutionType.Name</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="CreateAuthority">Create</button>
+    </div>
+
+    <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
+    </div>
+
+</form>
+
+@code {
+    [Parameter]
+    public string Country { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    [Inject]
+    AuthorityRepository authorityRepository { get; set; }
+    [Inject]
+    CountryRepository countryRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
+    [Inject]
+    InstitutionRepository institutionRepository { get; set; }
+
+    Authority authority = new Authority();
+
+    List<InvestigationalProductType> investigationalProductTypes { get; set; }
+    List<InstitutionType> institutionTypes { get; set; }
+    List<Institution> institutions { get; set; }
+
+    public int institutionId { get; set; }
+    public int IPTypeId { get; set; }
+    public int InstitutionTypeId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
+        institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
+        institutions = await Task.Run(() => institutionRepository.GetByCountry(Country));
+    }
+
+    protected async void CreateAuthority()
+    {
+        authority.Country = await countryRepository.GetByName(Country);
+        authority.Institution = await institutionRepository.GetById(institutionId);
+        authority.InstitutionType = await institutionTypeRepository.GetById(InstitutionTypeId);
+        authority.InvestigationalProductType = await IPTypeRepository.GetById(IPTypeId);
+        authority.Created = DateTime.UtcNow;
+        authority.Modified = DateTime.UtcNow;
+        await authorityRepository.Create(authority);
+        NavigationManager.NavigateTo($"/{Country}/Authorities/Index");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo($"/{Country}/Authorities/Index");
+    }
+}

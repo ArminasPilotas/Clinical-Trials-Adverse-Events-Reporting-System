@@ -1,0 +1,78 @@
+﻿@page "/{Country}/Institution/Index"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+
+
+<NavLink class="nav-link">
+    <a href="/@Country/Institution/Add">
+        <span class="oi oi-plus" aria-hidden="true">Add Institution</span>
+    </a>
+</NavLink>
+
+@if (institutions is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Institution Type</th>
+                <th scope="col">Institution Name</th>
+                <th scope="col">Author</th>
+                <th scope="col">Editor</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Modified At</th>
+                <th scope="col">Modify Reason</th>
+                <td scope="col"></td>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var institution in institutions)
+            {
+                <tr>
+                    <td>@institution.Id</td>
+                    <td>@institution.InstitutionType.Name</td>
+                    <td>@institution.Name</td>
+                    <td>@institution.Author</td>
+                    <td>@institution.Editor</td>
+                    <td>@institution.Created</td>
+                    <td>@institution.Modified</td>
+                    <td>@institution.ModifyReason</td>
+
+                    <td>
+                        <a class="nav-link" href="/@Country/Institution/View/@institution.Id">
+                            <span class="oi oi-eye" aria-hidden="true">View</span>
+                        </a>
+                        <a class="nav-link" href="/@Country/Institution/Edit/@institution.Id">
+                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                        </a>
+                        <a class="nav-link" href="/@Country/Institution/Delete/@institution.Id">
+                            <span class="oi oi-trash" aria-hidden="true">Delete</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    [Inject]
+    InstitutionRepository institutionRepository { get; set; }
+
+    [Parameter]
+    public string Country { get; set; }
+
+    List<Institution> institutions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        institutions = await Task.Run(() => institutionRepository.GetByCountry(Country));
+    }
+}

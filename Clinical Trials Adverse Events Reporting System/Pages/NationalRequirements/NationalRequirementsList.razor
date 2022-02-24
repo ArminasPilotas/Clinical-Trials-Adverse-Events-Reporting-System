@@ -1,0 +1,76 @@
+﻿@page "/{Country}/NationalRequirements/Index"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+
+<NavLink class="nav-link">
+    <a href="/@Country/NationalRequirements/Add">
+        <span class="oi oi-plus" aria-hidden="true">Add National Requirement</span>
+    </a>
+</NavLink>
+
+@if(nationalRequirements is null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Reporting Type</th>
+                            <th scope="col">Institution Type</th>
+                            <th scope="col">SUSAR Type</th>
+                            <th scope="col">Case Origin</th>
+                            <th scope="col">IP Type</th>
+                            <th scope="col">Report Type</th>
+                            <th scope="col">Days</th>
+                            <th scope="col">Report name</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach(var nationalRequirement in nationalRequirements)
+                {
+                    <tr>
+                        <td>@nationalRequirement.ReportingType.Name</td>
+                        <td>@nationalRequirement.InstitutionType.Name</td>
+                        <td>@nationalRequirement.SusarType.Name</td>
+                        <td>@nationalRequirement.CaseOrigin.Name</td>
+                        <td>@nationalRequirement.InvestigationalProductType.Name</td>
+                        <td>@nationalRequirement.ReportType.Name</td>
+                        <td>@nationalRequirement.Days</td>
+                        <td>@nationalRequirement.Comments</td>
+
+                        <td>
+                            <a class="nav-link" href="/@Country/NationalRequirement/View/@nationalRequirement.Id">
+                                <span class="oi oi-eye" aria-hidden="true">View</span>
+                            </a>
+                            <a class="nav-link" href="/@Country/NationalRequirement/Edit/@nationalRequirement.Id">
+                                <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                            </a>
+                            <a class="nav-link" href="/@Country/NationalRequirement/Delete/@nationalRequirement.Id">
+                                <span class="oi oi-eye" aria-hidden="true">Delete</span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+                    </tbody>
+                </table>
+            }
+@code {
+
+    [Inject]
+    NationalRequirementsRepository nationalRequirementsRepository { get; set; }
+
+    [Parameter]
+    public string Country { get; set; }
+
+    List<NationalRequirement> nationalRequirements;
+
+    protected override async Task OnInitializedAsync()
+    {
+        nationalRequirements = await Task.Run(() => nationalRequirementsRepository.GetByCountry(Country));
+    }
+}

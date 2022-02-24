@@ -1,0 +1,68 @@
+﻿@page "/{Country}/Authorities/Index"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+
+<NavLink class="nav-link">
+    <a href="/@Country/Authority/Add">
+        <span class="oi oi-plus" aria-hidden="true">Add Authority</span>
+    </a>
+</NavLink>
+
+@if(authorities is null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Investigational Product Type</th>
+                            <th scope="col">Institution Type</th>
+                            <th scope="col">Institution</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach(var authority in authorities)
+                {
+                    <tr>
+                        <td>@authority.Id</td>
+                        <td>@authority.InvestigationalProductType.Name</td>
+                        <td>@authority.InstitutionType.Name</td>
+                        <td>@authority.Institution.Name</td>
+
+                        <td>
+                            <a class="nav-link" href="/@Country/Authority/Edit/@authority.Id">
+                                <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                            </a>
+                            <a class="nav-link" href="/@Country/Authority/Delete/@authority.Id">
+                                <span class="oi oi-trash" aria-hidden="true">Delete</span>
+                            </a>
+                            <a class="nav-link" href="/@Country/Authority/View/@authority.Id">
+                                <span class="oi oi-eye" aria-hidden="true">View</span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+                    </tbody>
+                </table>
+            }
+
+@code {
+    [Inject]
+    AuthorityRepository authorityRepository { get; set; }
+
+    [Parameter]
+    public string Country { get; set; }
+
+    List<Authority> authorities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authorities = await Task.Run(() => authorityRepository.GetByCountry(Country));
+    }
+}

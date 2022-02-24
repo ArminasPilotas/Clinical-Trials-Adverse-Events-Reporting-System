@@ -32,6 +32,10 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
             services.AddServerSideBlazor();
             services.AddDbContext<Entities.CTAERS>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
             services.AddScoped(typeof(IClassifierRepository<>), typeof(ClassifierRepository<>));
+            services.AddScoped<CountryRepository>();
+            services.AddScoped<InstitutionRepository>();
+            services.AddScoped<NationalRequirementsRepository>();
+            services.AddScoped<AuthorityRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
