@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Syncfusion.Blazor;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System
 {
@@ -36,6 +37,9 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
             services.AddScoped<InstitutionRepository>();
             services.AddScoped<NationalRequirementsRepository>();
             services.AddScoped<AuthorityRepository>();
+            services.AddScoped<CountryRequirementVersionRepository>();
+            services.AddScoped<NationalRequirementVersionRepository>();
+            services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
