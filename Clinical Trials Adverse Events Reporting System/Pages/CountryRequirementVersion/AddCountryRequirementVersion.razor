@@ -1,0 +1,101 @@
+﻿@page "/{Country}/CountryRequirementsVersion/Add"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+
+<form>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Country</label>
+        <div class="col-sm-10">
+            <label class="form-control">@Country</label>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Investigational Product Type</label>
+        <div class="col-sm-10">
+            <select class="form-control" @bind="IPTypeId">
+                <option selected>Choose</option>
+                @if (investigationalProductTypes != null)
+                {
+                    @foreach (var investigationalProductType in investigationalProductTypes)
+                    {
+                        <option value="@investigationalProductType.Id">@investigationalProductType.Name</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Date Of Renewal</label>
+        <div class="col-sm-10">
+            <SfDateTimePicker TValue="DateTime" @bind-Value="@DateValue" Min="DateTime.Now"  Placeholder="Select a data and time"></SfDateTimePicker>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Requirement Version</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="countryRequirementVersion.RequirementVersion" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Contact Version</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="countryRequirementVersion.ContactVersion" />
+        </div>
+    </div>
+
+    <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="CreateCountryRequirementVersion">Create</button>
+    </div>
+
+    <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string Country { get; set; }
+    [Inject]
+    CountryRepository countryRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
+    [Inject]
+    CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    List<InvestigationalProductType> investigationalProductTypes;
+
+    public CountryRequirementVersion countryRequirementVersion = new CountryRequirementVersion();
+
+    public int IPTypeId { get; set; }
+
+    public DateTime DateValue { get; set; } = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
+    }
+
+    protected async void CreateCountryRequirementVersion()
+    {
+        countryRequirementVersion.Country = await countryRepository.GetByName(Country);
+        countryRequirementVersion.InvestigationalProductType = await IPTypeRepository.GetById(IPTypeId);
+        countryRequirementVersion.Created = DateTime.UtcNow;
+        countryRequirementVersion.Modified = DateTime.UtcNow;
+        countryRequirementVersion.ContactRevisionDate = DateTime.UtcNow;
+        countryRequirementVersion.DateOfRenewal = DateValue;
+        await countryRequirementVersionRepository.Create(countryRequirementVersion);
+        NavigationManager.NavigateTo($"{Country}/CountryRequirementsVersion/Index");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo($"{Country}/CountryRequirementsVersion/Index");
+    }
+}

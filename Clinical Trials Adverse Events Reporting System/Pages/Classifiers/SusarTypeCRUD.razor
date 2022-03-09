@@ -3,50 +3,14 @@
 
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
 @inject IClassifierRepository<SusarType> classifierRepository
 @inject NavigationManager NavigationManager
 
-@if (Action != "Delete")
-{
-    <form>
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Name</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" @bind="classifier.Name" />
-            </div>
-        </div>
+<ClassifierCRUD Classifier="@classifier" Action="@Action" @bind-Name="@classifier.Name" @bind-ModifyReason="@classifier.ModifyReason"
+                OnCreateClick="CreateClassifier" OnEditClick="UpdateClassifier" OnDeleteClick="DeleteClassifier"></ClassifierCRUD>
 
-        @if (Action == "Edit")
-        {
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Modify Reason</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" @bind="classifier.ModifyReason" />
-                </div>
-            </div>
-        }
-        <label></label>
-
-        @if (Action == "Edit")
-        {
-            <div class="col-md-12 text-center">
-                <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="UpdateClassifier">Update</button>
-            </div>
-        }
-        @if (Action == "Create")
-        {
-            <div class="col-md-12 text-center">
-                <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="CreateClassifier">Create</button>
-            </div>
-        }
-
-        <div class="col-md-12 text-center">
-            <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
-        </div>
-
-    </form>
-}
 
 
 @code {

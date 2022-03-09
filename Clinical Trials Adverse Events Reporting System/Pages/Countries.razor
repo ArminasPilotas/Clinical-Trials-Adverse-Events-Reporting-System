@@ -11,7 +11,12 @@
             else
             {
 
-        <h2>(TODO) Add Search Engine</h2>
+<div class="input-group">
+    <div class="form-outline">
+        <label class="form-label" for="form1">Search</label>
+        <input type="search" id="form1" class="form-control" @oninput="SearchTextChanged" />
+    </div>
+</div>
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
@@ -22,7 +27,7 @@
             </thead>
 
             <tbody>
-                @foreach(var country in countries)
+                @foreach(var country in countriesSearchResult)
                 {
                     <tr>
                         <td>@country.Name</td>
@@ -39,6 +44,10 @@
                             <a class="nav-link" href="@country.Name/NationalRequirements/Index">
                                 <span class="oi oi-list" aria-hidden="true">View Requirements</span>
                             </a>
+
+                            <a class="nav-link" href="@country.Name/CountryRequirementsVersion/Index">
+                                <span class="oi oi-list" aria-hidden="true">Requirements Version</span>
+                            </a>
                         </td>
                     </tr>
                 }
@@ -50,10 +59,26 @@
 @code {
 
     public List<Country> countries { get; set; }
+    public List<Country> countriesSearchResult { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
         countries = await Task.Run(() => countryRepository.GetAll());
+        countriesSearchResult = countries;
+    }
+
+    private async void SearchTextChanged(ChangeEventArgs args)
+    {
+        string value = (string)args.Value;
+
+        if (string.IsNullOrEmpty(value))
+        {
+            countriesSearchResult = countries;
+        }
+        else
+        {
+            countriesSearchResult = countries.Where(e => e.Name.ToLower().Contains(value.ToLower())).ToList();
+        }
     }
 }

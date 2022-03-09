@@ -59,6 +59,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[5.0.0, )"
+            },
+            "Syncfusion.Blazor.Calendars": {
+              "target": "Package",
+              "version": "[19.4.0.54, )"
             }
           },
           "imports": [

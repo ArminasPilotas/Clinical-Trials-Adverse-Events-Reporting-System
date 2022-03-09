@@ -2,6 +2,7 @@
 
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
+@using Microsoft.EntityFrameworkCore
 
 <form>
     <div class="form-group row">
@@ -137,7 +138,11 @@
     [Inject]
     NationalRequirementsRepository nationalRequirementsRepository { get; set; }
     [Inject]
+    NationalRequirementVersionRepository nationalRequirementVersionRepository { get; set; }
+    [Inject]
     CountryRepository countryRepository { get; set; }
+    [Inject]
+    CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
     [Inject]
     IClassifierRepository<ReportingType> reportingTypeRepository { get; set; }
     [Inject]
@@ -161,6 +166,7 @@
     List<ReportType> reportTypes;
 
     NationalRequirement nationalRequirement = new NationalRequirement();
+    NationalRequirementVersion nationalRequirementVersion = new NationalRequirementVersion();
 
     public int reportingTypeId { get; set; }
     public int InstitutionTypeId { get; set; }
@@ -191,7 +197,17 @@
         nationalRequirement.Created = DateTime.UtcNow;
         nationalRequirement.Modified = DateTime.UtcNow;
         await nationalRequirementsRepository.Create(nationalRequirement);
+        CreateNationalRequirementVersion();
+
         NavigationManager.NavigateTo($"{Country}/NationalRequirements/Index");
+    }
+
+    protected async void CreateNationalRequirementVersion()
+    {
+        List <CountryRequirementVersion> countryRequirementVersions = await countryRequirementVersionRepository.GetByCountry(Country);
+        nationalRequirementVersion.CountryRequirementVersion = countryRequirementVersions.Where(e => e.InvestigationalProductType.Id == IpId).OrderByDescending(e => e.DateOfRenewal).FirstOrDefault();
+        nationalRequirementVersion.NationalRequirement = nationalRequirement;
+        await nationalRequirementVersionRepository.Create(nationalRequirementVersion);
     }
 
     private void Cancel()

@@ -1,0 +1,72 @@
+﻿@page "/{Country}/CountryRequirementsVersion/Index"
+
+@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.Data
+
+<NavLink class="nav-link">
+    <a href="/@Country/CountryRequirementsVersion/Add">
+        <span class="oi oi-plus" aria-hidden="true">Add National Requirement</span>
+    </a>
+</NavLink>
+
+@if (countryRequirementVersions is null)
+{
+    <p><em>Loading...</em></p>
+}
+            else
+            {
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th scope="col">IP Type</th>
+            <th scope="col">Date of reneval</th>
+            <th scope="col">Requirement Version</th>
+            <th scope="col">Contact revision date</th>
+            <th scope="col">Contact Version</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var countryRequirementVersion in countryRequirementVersions)
+        {
+            <tr>
+                <td>@countryRequirementVersion.InvestigationalProductType.Name</td>
+                <td>@countryRequirementVersion.DateOfRenewal</td>
+                <td>@countryRequirementVersion.RequirementVersion</td>
+                <td>@countryRequirementVersion.ContactRevisionDate</td>
+                <td>@countryRequirementVersion.ContactVersion</td>
+
+        <td>
+            <a class="nav-link" href="/@Country/CountryRequirementVersion/View/@countryRequirementVersion.Id">
+                <span class="oi oi-eye" aria-hidden="true">View</span>
+            </a>
+            <a class="nav-link" href="/@Country/CountryRequirementVersion/Edit/@countryRequirementVersion.Id">
+                <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+            </a>
+            <a class="nav-link" href="/@Country/CountryRequirementVersion/Delete/@countryRequirementVersion.Id">
+                <span class="oi oi-eye" aria-hidden="true">Delete</span>
+            </a>
+        </td>
+        </tr>
+    }
+        </tbody>
+    </table>
+            }
+
+@code {
+    [Parameter]
+    public string Country { get; set; }
+
+    [Inject]
+    CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
+
+    List<CountryRequirementVersion> countryRequirementVersions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        countryRequirementVersions = await Task.Run(() => countryRequirementVersionRepository.GetByCountry(Country));
+    }
+
+
+}

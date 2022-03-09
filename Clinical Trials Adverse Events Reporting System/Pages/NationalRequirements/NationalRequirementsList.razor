@@ -9,12 +9,14 @@
     </a>
 </NavLink>
 
+
 @if(nationalRequirements is null)
             {
                 <p><em>Loading...</em></p>
             }
             else
             {
+<button type="button" class="btn btn-secondary btn-lg" @onclick="CompleteVersionRenewal">Complete Renewal</button>
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
@@ -26,6 +28,7 @@
                             <th scope="col">Report Type</th>
                             <th scope="col">Days</th>
                             <th scope="col">Report name</th>
+                            <th scope="col">Version</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -33,6 +36,7 @@
                     <tbody>
                         @foreach(var nationalRequirement in nationalRequirements)
                 {
+                            var countryRequirementVersion = nationalRequirementVersions.Where(e => e.NationalRequirement.Id == nationalRequirement.Id).FirstOrDefault().CountryRequirementVersion;
                     <tr>
                         <td>@nationalRequirement.ReportingType.Name</td>
                         <td>@nationalRequirement.InstitutionType.Name</td>
@@ -42,6 +46,7 @@
                         <td>@nationalRequirement.ReportType.Name</td>
                         <td>@nationalRequirement.Days</td>
                         <td>@nationalRequirement.Comments</td>
+                        <td>@countryRequirementVersion.InvestigationalProductType.Name:@countryRequirementVersion.RequirementVersion (@countryRequirementVersion.DateOfRenewal)</td>
 
                         <td>
                             <a class="nav-link" href="/@Country/NationalRequirement/View/@nationalRequirement.Id">
@@ -60,17 +65,42 @@
                 </table>
             }
 @code {
-
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
     [Inject]
     NationalRequirementsRepository nationalRequirementsRepository { get; set; }
+    [Inject]
+    NationalRequirementVersionRepository nationalRequirementVersionRepository { get; set; }
+    [Inject]
+    CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
 
     [Parameter]
     public string Country { get; set; }
 
     List<NationalRequirement> nationalRequirements;
+    List<NationalRequirementVersion> nationalRequirementVersions;
 
     protected override async Task OnInitializedAsync()
     {
         nationalRequirements = await Task.Run(() => nationalRequirementsRepository.GetByCountry(Country));
+        nationalRequirementVersions = await Task.Run(() => nationalRequirementVersionRepository.GetAll());
+    }
+
+    protected async void CompleteVersionRenewal() //TODO DO NOT UPDATES DATA (NEED TO REFRESH FOR EFFECT)
+    {
+        List <CountryRequirementVersion> countryRequirementVersions = await countryRequirementVersionRepository.GetByCountry(Country);
+
+        foreach(NationalRequirement nationalRequirement in nationalRequirements)
+        {
+            NationalRequirementVersion nationalRequirementVersion = nationalRequirementVersions.Where(e => e.NationalRequirement.Id == nationalRequirement.Id).FirstOrDefault();
+                
+            nationalRequirementVersion.CountryRequirementVersion = countryRequirementVersions
+            .Where(e => e.InvestigationalProductType.Id == nationalRequirementVersion.NationalRequirement.InvestigationalProductType.Id)
+            .OrderByDescending(e => e.DateOfRenewal).FirstOrDefault();
+
+            await nationalRequirementVersionRepository.Update(nationalRequirementVersion);
+                
+        }
+        StateHasChanged(); //TODO rerenders page, data updates normally
     }
 }
