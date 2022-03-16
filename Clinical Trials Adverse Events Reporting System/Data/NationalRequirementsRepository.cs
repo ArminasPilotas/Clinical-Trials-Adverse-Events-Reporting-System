@@ -18,6 +18,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Create(NationalRequirement nationalRequirement)
         {
+            nationalRequirement.Created = DateTime.UtcNow;
             await _dbContext.AddAsync(nationalRequirement);
             await _dbContext.SaveChangesAsync();
         }
@@ -56,6 +57,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Update(NationalRequirement nationalRequirement)
         {
+            nationalRequirement.Modified = DateTime.UtcNow;
             _dbContext.NationalRequirements.Update(nationalRequirement);
             await _dbContext.SaveChangesAsync();
         }

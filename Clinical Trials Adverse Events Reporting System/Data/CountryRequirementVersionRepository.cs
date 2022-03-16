@@ -18,6 +18,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Create (CountryRequirementVersion countryRequirementVersion)
         {
+            countryRequirementVersion.Created = DateTime.UtcNow;
             await _dbContext.AddAsync(countryRequirementVersion);
             await _dbContext.SaveChangesAsync();
         }
@@ -30,6 +31,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Update (CountryRequirementVersion countryRequirementVersion)
         {
+            countryRequirementVersion.Modified = DateTime.UtcNow;
             _dbContext.CountryRequirementVersions.Update(countryRequirementVersion);
             await _dbContext.SaveChangesAsync();
         }

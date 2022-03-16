@@ -2,6 +2,7 @@
 
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
+@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
 
 <NavLink class="nav-link">
@@ -32,7 +33,7 @@ else
         </thead>
 
         <tbody>
-            @foreach (var institution in institutions)
+            @foreach (var institution in institutionFilter)
             {
                 <tr>
                     <td>@institution.Id</td>
@@ -59,6 +60,7 @@ else
             }
         </tbody>
     </table>
+    <PaginationComponent CurrentPage="@CurrentPage" TotalPagesNumber="@((institutions.Count + RecordsPerPage-1)/RecordsPerPage)" PageChanged="@OnPageChanged"></PaginationComponent>
 }
 
 @code {
@@ -69,10 +71,26 @@ else
     [Parameter]
     public string Country { get; set; }
 
+    public int RecordsPerPage { get; set; }
+    public int CurrentPage { get; set; }
+
     List<Institution> institutions;
+    List<Institution> institutionFilter;
 
     protected override async Task OnInitializedAsync()
     {
         institutions = await Task.Run(() => institutionRepository.GetByCountry(Country));
+        CurrentPage = 1;
+        RecordsPerPage = 10;
+        OnPageChanged(CurrentPage);
+
+    }
+
+    private void OnPageChanged(int pressedPageNumber)
+    {
+        CurrentPage = pressedPageNumber;
+        int indexFrom = (CurrentPage - 1) * RecordsPerPage;
+        institutionFilter = institutions.Skip(indexFrom).Take(RecordsPerPage).ToList();
+        StateHasChanged();
     }
 }

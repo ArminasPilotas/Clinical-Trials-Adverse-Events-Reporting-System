@@ -18,11 +18,12 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Create(NationalRequirementVersion nationalRequirementCountryRequirementVersion)
         {
+            nationalRequirementCountryRequirementVersion.Created = DateTime.UtcNow;
             await _dbContext.AddAsync(nationalRequirementCountryRequirementVersion);
             await _dbContext.SaveChangesAsync();
         }
         
-        public async Task<NationalRequirementVersion> GetByNationalRequirement(int nationalRequirementId) //TODO implement in nationalRequirements List
+        public async Task<NationalRequirementVersion> GetByNationalRequirement(int nationalRequirementId)
         {
             return await _dbContext.NationalRequirementCountryRequirementVersions.FirstOrDefaultAsync(e => e.NationalRequirement.Id == nationalRequirementId);
         }
@@ -38,6 +39,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
         
         public async Task Update(NationalRequirementVersion nationalRequirementVersion)
         {
+            nationalRequirementVersion.Modified = DateTime.UtcNow;
             _dbContext.NationalRequirementCountryRequirementVersions.Update(nationalRequirementVersion);
             await _dbContext.SaveChangesAsync();
         }

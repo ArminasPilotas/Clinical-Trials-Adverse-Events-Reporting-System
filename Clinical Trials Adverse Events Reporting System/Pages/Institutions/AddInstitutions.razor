@@ -2,6 +2,7 @@
 
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
+@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
 @inject InstitutionRepository institutionRepository
 @inject IClassifierRepository<InvestigationalProductType> investigationalProductTypeRepository
@@ -9,140 +10,80 @@
 @inject CountryRepository countryRepository 
 @inject NavigationManager NavigationManager
 
-<form>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Institution Name</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Name" />
-        </div>
-    </div>
+@if (institution != null)
+{
+<EditForm Model="@institution" OnValidSubmit="@AddInstitution" @onreset="@Cancel">
+    <DataAnnotationsValidator />
 
-   
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Institution Type</label>
-        <div class="col-sm-10">
-            <select class="form-control" @bind="institutionTypeId">
-                <option selected>Choose</option>
-                @if (institutionTypes != null)
-                {
-                    @foreach (var institutionType in institutionTypes)
-                    {
-                        <option value="@institutionType.Id">@institutionType.Name</option>
-                    }
-                }
-           </select>
-        </div>
-    </div>
+    <ValidationSummary />
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Address</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Address" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.Name" Label="Institution Name"> </CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Phone</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Phone" />
-        </div>
-    </div>
+    <CustomInputSelect @bind-value="@InstitutionTypeId" labelName="Institution Type" items="@institutionTypes"></CustomInputSelect>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Fax</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Fax" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.Address" Label="Address"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Email</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Email" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.Phone" Label="Phone"></CustomInputText>
 
+    <CustomInputText @bind-Value="@institution.Fax" Label="Fax"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Alternate Address</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.AlternateAddress" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.Email" Label="Email"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Alternate Phone</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.AlternatePhone" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.AlternateAddress" Label="Alternate Address"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Alternate Fax</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.AlternateFax" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.AlternatePhone" Label="Alternate Phone"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Alternate Email</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.AlternateEmail" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.AlternateFax" Label="Alternate Fax"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">City</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.City" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.AlternateEmail" Label="Alternate Email"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Registration Number</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.RegNo" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@institution.City" Label="City"></CustomInputText>
 
+    <CustomInputText @bind-Value="@institution.RegNo" Label="Registration Number"></CustomInputText>
 
+    <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="AddInstitution">Create</button>
-    </div>
+    <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
-    </div>
-</form>
-
-@code { //TODO ADD VALIDATION
-    [Parameter]
-    public string Country { get; set; }
-
-    public int institutionTypeId { get; set; }
-
-    Institution institution = new Institution();
-    List<InstitutionType> institutionTypes;
-
-    protected override async Task OnInitializedAsync()
-    {
-        institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
-
-    }
-
-    protected async void AddInstitution()
-    {
-        institution.Country = await countryRepository.GetByName(Country);
-        institution.InstitutionType = await institutionTypeRepository.GetById(institutionTypeId);
-        institution.Created = DateTime.UtcNow;
-        institution.Modified = DateTime.UtcNow;
-        await institutionRepository.Create(institution);
-        NavigationManager.NavigateTo("");
-    }
-
-    private void Cancel()
-    {
-        NavigationManager.NavigateTo("");
-    }
+</EditForm>
 }
+
+    @code {
+        [Parameter]
+        public string Country { get; set; }
+
+        public Institution institution = new Institution();
+        public List<InstitutionType> institutionTypes { get; set; }
+        public List<Country> countries { get; set; }
+
+
+        public int InstitutionTypeId
+        {
+            get {
+                if (institution.InstitutionType != null)
+                {
+                    return institution.InstitutionType.Id;
+                }
+                return 0;
+            }
+            set => institution.InstitutionType = institutionTypes.Single(c => c.Id == value);
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
+            countries = await Task.Run(() => countryRepository.GetAll());
+            institution.Country = countries.Where(c => c.Name == Country).SingleOrDefault();
+        }
+
+        protected async void AddInstitution()
+        {
+            await institutionRepository.Create(institution);
+            NavigationManager.NavigateTo("");
+        }
+
+        private void Cancel()
+        {
+            NavigationManager.NavigateTo("");
+        }
+    }

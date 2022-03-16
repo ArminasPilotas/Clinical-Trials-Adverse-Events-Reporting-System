@@ -18,6 +18,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Create(Institution institution)
         {
+            institution.Created = DateTime.UtcNow;
             await _dbContext.AddAsync(institution);
             await _dbContext.SaveChangesAsync();
         }
@@ -28,7 +29,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<Institution>> GetByCountry(string countryName) //TODO is this good aproach? I can Find by id or by object
+        public async Task<List<Institution>> GetByCountry(string countryName)
         {
             return await _dbContext.Institutions
                 .Include(e => e.InstitutionType)
@@ -48,6 +49,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Update (Institution institution)
         {
+            institution.Modified = DateTime.UtcNow;
             _dbContext.Institutions.Update(institution);
             await _dbContext.SaveChangesAsync();
         }

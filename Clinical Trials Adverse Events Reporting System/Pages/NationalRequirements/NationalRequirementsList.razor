@@ -10,60 +10,77 @@
 </NavLink>
 
 
-@if(nationalRequirements is null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else
-            {
-<button type="button" class="btn btn-secondary btn-lg" @onclick="CompleteVersionRenewal">Complete Renewal</button>
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">Reporting Type</th>
-                            <th scope="col">Institution Type</th>
-                            <th scope="col">SUSAR Type</th>
-                            <th scope="col">Case Origin</th>
-                            <th scope="col">IP Type</th>
-                            <th scope="col">Report Type</th>
-                            <th scope="col">Days</th>
-                            <th scope="col">Report name</th>
-                            <th scope="col">Version</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
+@if (nationalRequirements is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <label>Show Inactive</label>
+    <input type="checkbox" @onchange="@InactiveValueChanged" />
 
-                    <tbody>
-                        @foreach(var nationalRequirement in nationalRequirements)
-                {
-                            var countryRequirementVersion = nationalRequirementVersions.Where(e => e.NationalRequirement.Id == nationalRequirement.Id).FirstOrDefault().CountryRequirementVersion;
-                    <tr>
-                        <td>@nationalRequirement.ReportingType.Name</td>
-                        <td>@nationalRequirement.InstitutionType.Name</td>
-                        <td>@nationalRequirement.SusarType.Name</td>
-                        <td>@nationalRequirement.CaseOrigin.Name</td>
-                        <td>@nationalRequirement.InvestigationalProductType.Name</td>
-                        <td>@nationalRequirement.ReportType.Name</td>
-                        <td>@nationalRequirement.Days</td>
-                        <td>@nationalRequirement.Comments</td>
-                        <td>@countryRequirementVersion.InvestigationalProductType.Name:@countryRequirementVersion.RequirementVersion (@countryRequirementVersion.DateOfRenewal)</td>
+    <button type="button" class="btn btn-secondary btn-lg" @onclick="CompleteVersionRenewal">Complete Renewal</button>
 
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Reporting Type</th>
+                <th scope="col">Institution Type</th>
+                <th scope="col">SUSAR Type</th>
+                <th scope="col">Case Origin</th>
+                <th scope="col">IP Type</th>
+                <th scope="col">Report Type</th>
+                <th scope="col">Days</th>
+                <th scope="col">Report name</th>
+                <th scope="col">Version</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var nationalRequirement in nationalRequirementsFilter)
+            {
+                var countryRequirementVersion = nationalRequirementVersions.Where(e => e.NationalRequirement.Id == nationalRequirement.Id).Select(e => e.CountryRequirementVersion).OrderByDescending(e => e.DateOfRenewal).FirstOrDefault();
+                <tr>
+                    <td>@nationalRequirement.ReportingType.Name</td>
+                    <td>@nationalRequirement.InstitutionType.Name</td>
+                    <td>@nationalRequirement.SusarType.Name</td>
+                    <td>@nationalRequirement.CaseOrigin.Name</td>
+                    <td>@nationalRequirement.InvestigationalProductType.Name</td>
+                    <td>@nationalRequirement.ReportType.Name</td>
+                    <td>@nationalRequirement.Days</td>
+                    <td>@nationalRequirement.Comments</td>
+                    <td>@countryRequirementVersion.InvestigationalProductType.Name:@countryRequirementVersion.RequirementVersion (@countryRequirementVersion.DateOfRenewal.ToShortDateString())</td>
+                    @if (nationalRequirement.Valid)
+                    {
                         <td>
-                            <a class="nav-link" href="/@Country/NationalRequirement/View/@nationalRequirement.Id">
-                                <span class="oi oi-eye" aria-hidden="true">View</span>
-                            </a>
-                            <a class="nav-link" href="/@Country/NationalRequirement/Edit/@nationalRequirement.Id">
-                                <span class="oi oi-pencil" aria-hidden="true">Edit</span>
-                            </a>
-                            <a class="nav-link" href="/@Country/NationalRequirement/Delete/@nationalRequirement.Id">
-                                <span class="oi oi-eye" aria-hidden="true">Delete</span>
-                            </a>
+                            <span class="badge badge-success rounded-pill">Active</span>
                         </td>
-                    </tr>
-                }
-                    </tbody>
-                </table>
+                    }
+                    else
+                    {
+                        <td>
+                            <span class="badge badge-danger rounded-pill">Inactive</span>
+                        </td>
+                    }
+
+                    <td>
+                        <a class="nav-link" href="/@Country/NationalRequirement/View/@nationalRequirement.Id">
+                            <span class="oi oi-eye" aria-hidden="true">View</span>
+                        </a>
+                        <a class="nav-link" href="/@Country/NationalRequirement/Edit/@nationalRequirement.Id">
+                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                        </a>
+                        <a class="nav-link" href="/@Country/NationalRequirement/Delete/@nationalRequirement.Id">
+                            <span class="oi oi-eye" aria-hidden="true">Delete</span>
+                        </a>
+                    </td>
+                </tr>
             }
+        </tbody>
+    </table>
+}
 @code {
     [Inject]
     NavigationManager NavigationManager { get; set; }
@@ -78,29 +95,58 @@
     public string Country { get; set; }
 
     List<NationalRequirement> nationalRequirements;
+    List<NationalRequirement> nationalRequirementsFilter;
     List<NationalRequirementVersion> nationalRequirementVersions;
 
     protected override async Task OnInitializedAsync()
     {
         nationalRequirements = await Task.Run(() => nationalRequirementsRepository.GetByCountry(Country));
         nationalRequirementVersions = await Task.Run(() => nationalRequirementVersionRepository.GetAll());
+        nationalRequirementsFilter = nationalRequirements.Where(e => e.Valid == true).ToList();
     }
 
-    protected async void CompleteVersionRenewal() //TODO DO NOT UPDATES DATA (NEED TO REFRESH FOR EFFECT)
+    protected async void CompleteVersionRenewal()
     {
-        List <CountryRequirementVersion> countryRequirementVersions = await countryRequirementVersionRepository.GetByCountry(Country);
+        List<CountryRequirementVersion> countryRequirementVersions = await countryRequirementVersionRepository.GetByCountry(Country);
 
-        foreach(NationalRequirement nationalRequirement in nationalRequirements)
+        foreach (NationalRequirement nationalRequirement in nationalRequirements)
         {
-            NationalRequirementVersion nationalRequirementVersion = nationalRequirementVersions.Where(e => e.NationalRequirement.Id == nationalRequirement.Id).FirstOrDefault();
-                
-            nationalRequirementVersion.CountryRequirementVersion = countryRequirementVersions
-            .Where(e => e.InvestigationalProductType.Id == nationalRequirementVersion.NationalRequirement.InvestigationalProductType.Id)
-            .OrderByDescending(e => e.DateOfRenewal).FirstOrDefault();
+            //GET MOST RECENT Country Requirement Version based by IpType
+            CountryRequirementVersion countryRequirementVersion = countryRequirementVersions
+            .Where(e => e.InvestigationalProductType.Id == nationalRequirement.InvestigationalProductType.Id)
+            .OrderByDescending(e => e.DateOfRenewal)
+            .FirstOrDefault();
 
-            await nationalRequirementVersionRepository.Update(nationalRequirementVersion);
-                
+            //GET MOST RECENT Country Requirement Version that is used in national requirement versions based by IPType
+            CountryRequirementVersion nationalRequirementCountryRequirementVersion = nationalRequirementVersions
+                .Where(e => e.NationalRequirement.Id == nationalRequirement.Id)
+                .Select(e => e.CountryRequirementVersion)
+                .Where(e => e.InvestigationalProductType.Id == nationalRequirement.InvestigationalProductType.Id)
+                .OrderByDescending(e => e.DateOfRenewal)
+                .FirstOrDefault();
+
+            //Checking if country requirement version is newer than used country requirement version in national requirement version
+            if (countryRequirementVersion != null && DateTime.Compare(countryRequirementVersion.DateOfRenewal, nationalRequirementCountryRequirementVersion.DateOfRenewal) > 0)
+            {
+                NationalRequirementVersion nationalRequirementVersion = new NationalRequirementVersion();
+                nationalRequirementVersion.NationalRequirement = nationalRequirement;
+                nationalRequirementVersion.CountryRequirementVersion = countryRequirementVersion;
+                await nationalRequirementVersionRepository.Create(nationalRequirementVersion);
+                nationalRequirementVersions.Add(nationalRequirementVersion); //PROBLEM without this line of code StateHasChanged() not refreshes the data
+            }
         }
-        StateHasChanged(); //TODO rerenders page, data updates normally
+        StateHasChanged();
+    }
+    protected void InactiveValueChanged(ChangeEventArgs e)
+    {
+        if (!(Boolean)e.Value)
+        {
+            nationalRequirementsFilter = nationalRequirements.Where(e => e.Valid == true).ToList();
+        }
+        else
+        {
+            nationalRequirementsFilter = nationalRequirements;
+        }
+        StateHasChanged();
     }
 }

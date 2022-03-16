@@ -3,110 +3,25 @@
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
 @using Microsoft.EntityFrameworkCore
+@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
-<form>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Country</label>
-        <div class="col-sm-10">
-            <label class="form-control">@Country</label>
-        </div>
-    </div>
+<EditForm Model="@nationalRequirement" OnValidSubmit="CreateNationalRequirement" @onreset="@Cancel">
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Reporting Type</label>
-        <div class="col-sm-10">
-            <select class="form-control" @bind="reportingTypeId">
-                <option selected>Choose</option>
-                @if (reportingTypes != null)
-                {
-                    @foreach (var reportingType in reportingTypes)
-                    {
-                        <option value="@reportingType.Id">@reportingType.Name</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
+    <DataAnnotationsValidator></DataAnnotationsValidator>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Institution for Reporting</label>
-        <div class="col-sm-10">
-            <select class="form-control" @bind="InstitutionTypeId">
-                <option selected>Choose</option>
-                @if (institutionTypes != null)
-                {
-                    @foreach (var institutionType in institutionTypes)
-                    {
-                        <option value="@institutionType.Id">@institutionType.Name</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
+    <InputComponent inputName="@Country" labelName="Country" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">SUSAR Type</label>
-        <div class="col-sm-10">
-            <select class="form-control" @bind="susarTypeId">
-                <option selected>Choose</option>
-                @if (susarTypes != null)
-                {
-                    @foreach (var susarType in susarTypes)
-                    {
-                        <option value="@susarType.Id">@susarType.Name</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
+    <CustomInputSelect @bind-value="@ReportingTypeId" items="@reportingTypes" labelName="Reporting Type"></CustomInputSelect>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Case Origins</label>
-        <div class="col-sm-10">
-            <select class="form-control" @bind="caseOriginId">
-                <option selected>Choose</option>
-                @if (caseOrigins != null)
-                {
-                    @foreach (var caseOrigin in caseOrigins)
-                    {
-                        <option value="@caseOrigin.Id">@caseOrigin.Name</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
+    <CustomInputSelect @bind-value="@InstitutionTypeId" items="@institutionTypes" labelName="Institution for Reporting"></CustomInputSelect>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Investigational Product Types</label>
-        <div class="col-sm-10">
-            <select class="form-control" @bind="IpId">
-                <option selected>Choose</option>
-                @if (investigationalProductTypes != null)
-                {
-                    @foreach (var investigationalProductType in investigationalProductTypes)
-                    {
-                        <option value="@investigationalProductType.Id">@investigationalProductType.Name</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
+    <CustomInputSelect @bind-value="@SusarTypeId" items="@susarTypes" labelName="Susar Type"></CustomInputSelect>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Type of report</label>
-        <div class="col-sm-10">
-            <select class="form-control" @bind="reportTypeId">
-                <option selected>Choose</option>
-                @if (reportTypes != null)
-                {
-                    @foreach (var reportType in reportTypes)
-                    {
-                        <option value="@reportType.Id">@reportType.Name</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
+    <CustomInputSelect @bind-value="@CaseOriginId" items="@caseOrigins" labelName="Case Origins"></CustomInputSelect>
+
+    <CustomInputSelect @bind-value="@IpTypeId" items="@investigationalProductTypes" labelName="Investigational Product Types"></CustomInputSelect>
+
+    <CustomInputSelect @bind-value="@ReportTypeId" items="@reportTypes" labelName="Type of report"></CustomInputSelect>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Days</label>
@@ -115,22 +30,14 @@
         </div>
     </div>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Comments</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="nationalRequirement.Comments" />
-        </div>
-    </div>
+    <CustomInputText @bind-Value="@nationalRequirement.Comments" Label="Comments"></CustomInputText>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="CreateNationalRequirement">Create</button>
-    </div>
+    <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
-    </div>
+    <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
 
-</form>
+    <ValidationSummary></ValidationSummary>
+</EditForm>
 
 @code {
     [Parameter]
@@ -166,14 +73,73 @@
     List<ReportType> reportTypes;
 
     NationalRequirement nationalRequirement = new NationalRequirement();
-    NationalRequirementVersion nationalRequirementVersion = new NationalRequirementVersion();
 
-    public int reportingTypeId { get; set; }
-    public int InstitutionTypeId { get; set; }
-    public int susarTypeId { get; set; }
-    public int caseOriginId { get; set; }
-    public int IpId { get; set; }
-    public int reportTypeId { get; set; }
+    public int ReportingTypeId {
+        get
+        {
+            if(nationalRequirement.ReportingType != null)
+            {
+                return nationalRequirement.ReportingType.Id;
+            }
+            return 0;
+        }
+        set => nationalRequirement.ReportingType = reportingTypes.Single(c => c.Id == value);
+    }
+    public int InstitutionTypeId {
+        get
+        {
+            if (nationalRequirement.InstitutionType != null)
+            {
+                return nationalRequirement.InstitutionType.Id;
+            }
+            return 0;
+        }
+        set => nationalRequirement.InstitutionType = institutionTypes.Single(c => c.Id == value);
+    }
+    public int SusarTypeId {
+        get
+        {
+            if (nationalRequirement.SusarType != null)
+            {
+                return nationalRequirement.SusarType.Id;
+            }
+            return 0;
+        }
+        set => nationalRequirement.SusarType = susarTypes.Single(c => c.Id == value);
+    }
+    public int CaseOriginId {
+        get
+        {
+            if (nationalRequirement.CaseOrigin != null)
+            {
+                return nationalRequirement.CaseOrigin.Id;
+            }
+            return 0;
+        }
+        set => nationalRequirement.CaseOrigin = caseOrigins.Single(c => c.Id == value);
+    }
+    public int IpTypeId
+    {
+        get
+        {
+            if (nationalRequirement.InvestigationalProductType != null)
+            {
+                return nationalRequirement.InvestigationalProductType.Id;
+            }
+            return 0;
+        }
+        set => nationalRequirement.InvestigationalProductType = investigationalProductTypes.Single(c => c.Id == value);
+    }
+    public int ReportTypeId {
+        get
+        {
+            if (nationalRequirement.ReportType != null)
+            {
+                return nationalRequirement.ReportType.Id;
+            }
+            return 0;
+        }
+        set => nationalRequirement.ReportType = reportTypes.Single(c => c.Id == value); }
 
     protected override async Task OnInitializedAsync()
     {
@@ -183,29 +149,22 @@
         caseOrigins = await Task.Run(() => caseOriginRepository.GetAll());
         investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
         reportTypes = await Task.Run(() => reportTypeRepository.GetAll());
+        nationalRequirement.Country = await countryRepository.GetByName(Country);
     }
 
     protected async void CreateNationalRequirement()
     {
-        nationalRequirement.Country = await countryRepository.GetByName(Country);
-        nationalRequirement.ReportingType = await reportingTypeRepository.GetById(reportingTypeId);
-        nationalRequirement.InstitutionType = await institutionTypeRepository.GetById(InstitutionTypeId);
-        nationalRequirement.SusarType = await susarTypeRepository.GetById(susarTypeId);
-        nationalRequirement.CaseOrigin = await caseOriginRepository.GetById(caseOriginId);
-        nationalRequirement.InvestigationalProductType = await IPTypeRepository.GetById(IpId);
-        nationalRequirement.ReportType = await reportTypeRepository.GetById(reportTypeId);
-        nationalRequirement.Created = DateTime.UtcNow;
-        nationalRequirement.Modified = DateTime.UtcNow;
         await nationalRequirementsRepository.Create(nationalRequirement);
-        CreateNationalRequirementVersion();
+        await CreateNationalRequirementVersion();
 
         NavigationManager.NavigateTo($"{Country}/NationalRequirements/Index");
     }
 
-    protected async void CreateNationalRequirementVersion()
+    protected async Task CreateNationalRequirementVersion()
     {
-        List <CountryRequirementVersion> countryRequirementVersions = await countryRequirementVersionRepository.GetByCountry(Country);
-        nationalRequirementVersion.CountryRequirementVersion = countryRequirementVersions.Where(e => e.InvestigationalProductType.Id == IpId).OrderByDescending(e => e.DateOfRenewal).FirstOrDefault();
+        NationalRequirementVersion nationalRequirementVersion = new NationalRequirementVersion();
+        List<CountryRequirementVersion> countryRequirementVersions = await countryRequirementVersionRepository.GetByCountry(Country);
+        nationalRequirementVersion.CountryRequirementVersion = countryRequirementVersions.Where(e => e.InvestigationalProductType.Id == IpTypeId).OrderByDescending(e => e.DateOfRenewal).FirstOrDefault();
         nationalRequirementVersion.NationalRequirement = nationalRequirement;
         await nationalRequirementVersionRepository.Create(nationalRequirementVersion);
     }
@@ -214,4 +173,5 @@
     {
         NavigationManager.NavigateTo($"{Country}/NationalRequirements/Index");
     }
+
 }

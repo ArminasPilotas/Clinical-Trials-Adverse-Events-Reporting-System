@@ -13,46 +13,43 @@
 {
     <p><em>Loading...</em></p>
 }
-            else
-            {
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th scope="col">IP Type</th>
-            <th scope="col">Date of reneval</th>
-            <th scope="col">Requirement Version</th>
-            <th scope="col">Contact revision date</th>
-            <th scope="col">Contact Version</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var countryRequirementVersion in countryRequirementVersions)
-        {
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
             <tr>
-                <td>@countryRequirementVersion.InvestigationalProductType.Name</td>
-                <td>@countryRequirementVersion.DateOfRenewal</td>
-                <td>@countryRequirementVersion.RequirementVersion</td>
-                <td>@countryRequirementVersion.ContactRevisionDate</td>
-                <td>@countryRequirementVersion.ContactVersion</td>
+                <th scope="col">IP Type</th>
+                <th scope="col">Date of reneval</th>
+                <th scope="col">Requirement Version</th>
+                <th scope="col">Contact revision date</th>
+                <th scope="col">Contact Version</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
 
-        <td>
-            <a class="nav-link" href="/@Country/CountryRequirementVersion/View/@countryRequirementVersion.Id">
-                <span class="oi oi-eye" aria-hidden="true">View</span>
-            </a>
-            <a class="nav-link" href="/@Country/CountryRequirementVersion/Edit/@countryRequirementVersion.Id">
-                <span class="oi oi-pencil" aria-hidden="true">Edit</span>
-            </a>
-            <a class="nav-link" href="/@Country/CountryRequirementVersion/Delete/@countryRequirementVersion.Id">
-                <span class="oi oi-eye" aria-hidden="true">Delete</span>
-            </a>
-        </td>
-        </tr>
-    }
+        <tbody>
+            @foreach (var countryRequirementVersion in countryRequirementVersions)
+            {
+                <tr>
+                    <td>@countryRequirementVersion.InvestigationalProductType.Name</td>
+                    <td>@countryRequirementVersion.DateOfRenewal.ToShortDateString()</td>
+                    <td>@countryRequirementVersion.RequirementVersion</td>
+                    <td>@countryRequirementVersion.ContactRevisionDate.ToShortDateString()</td>
+                    <td>@countryRequirementVersion.ContactVersion</td>
+
+                    <td>
+                        @if (!nationalRequirementVersions.Where(c => c.CountryRequirementVersion == countryRequirementVersion).Any())
+                        {
+                            <button class="nav-link" style="background:transparent; border:none;" @onclick="@(() => DeleteCountryRequirementVersion(countryRequirementVersion))">
+                                <span class="oi oi-eye" aria-hidden="true"> Delete</span>
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
-            }
+}
 
 @code {
     [Parameter]
@@ -60,12 +57,23 @@
 
     [Inject]
     CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
+    [Inject]
+    NationalRequirementVersionRepository NationalRequirementVersionRepository { get; set; }
 
     List<CountryRequirementVersion> countryRequirementVersions;
+    List<NationalRequirementVersion> nationalRequirementVersions;
 
     protected override async Task OnInitializedAsync()
     {
         countryRequirementVersions = await Task.Run(() => countryRequirementVersionRepository.GetByCountry(Country));
+        nationalRequirementVersions = await Task.Run(() => NationalRequirementVersionRepository.GetAll());
+    }
+
+    private async void DeleteCountryRequirementVersion(CountryRequirementVersion countryRequirementVersion)
+    {
+        await countryRequirementVersionRepository.Delete(countryRequirementVersion);
+        countryRequirementVersions.Remove(countryRequirementVersion);
+        StateHasChanged();
     }
 
 

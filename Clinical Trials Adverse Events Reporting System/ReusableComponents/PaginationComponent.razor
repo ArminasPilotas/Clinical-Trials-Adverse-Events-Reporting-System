@@ -1,0 +1,41 @@
+﻿<nav>
+    <ul class="pagination justify-content-center">
+        @if (0 < CurrentPage - 1)
+        {
+            <li class="page-item">
+                <button class="btn page-link" @onclick="() => PageChanged(CurrentPage-1)">&lt;&lt;</button>
+            </li>
+        }
+
+        @for (int i = 1; i <= TotalPagesNumber; i++)
+        {
+            var temp = i;
+            <li>
+                @if (CurrentPage == temp)
+                {
+                    <button class="page-link" disabled>@temp</button>
+                }
+                else
+                {
+                    <button class="page-link" @onclick="@(() => PageChanged(temp))">@temp</button>
+                }
+            </li>
+        }
+
+        @if (TotalPagesNumber > CurrentPage)
+        {
+            <li class="page-item">
+                <button class="page-link" @onclick="() => PageChanged(CurrentPage+1)">&gt;&gt;</button>
+            </li>
+        }
+    </ul>
+</nav>
+
+@code {
+    [Parameter]
+    public int CurrentPage { get; set; }
+    [Parameter]
+    public Action<int> PageChanged { get; set; }
+    [Parameter]
+    public int TotalPagesNumber { get; set; }
+}

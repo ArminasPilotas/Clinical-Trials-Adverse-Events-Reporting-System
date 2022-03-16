@@ -2,60 +2,44 @@
 
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
+@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents 
 
-<form>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Country</label>
-        <div class="col-sm-10">
-            <label class="form-control">@Country</label>
-        </div>
-    </div>
+<EditForm Model="@countryRequirementVersion" OnValidSubmit="@CreateCountryRequirementVersion" @onreset="@Cancel">
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Investigational Product Type</label>
-        <div class="col-sm-10">
-            <select class="form-control" @bind="IPTypeId">
-                <option selected>Choose</option>
-                @if (investigationalProductTypes != null)
-                {
-                    @foreach (var investigationalProductType in investigationalProductTypes)
-                    {
-                        <option value="@investigationalProductType.Id">@investigationalProductType.Name</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+
+    <InputComponent @bind-inputName="@Country" labelName="Country" readOnly="true"></InputComponent>
+
+    <CustomInputSelect @bind-value="IPTypeId" items="@investigationalProductTypes" labelName="Investigational Product Type"></CustomInputSelect>
+
+    <CustomInputText @bind-Value="@countryRequirementVersion.RequirementVersion" Label="Requirement Version"></CustomInputText>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Date Of Renewal</label>
         <div class="col-sm-10">
-            <SfDateTimePicker TValue="DateTime" @bind-Value="@DateValue" Min="DateTime.Now"  Placeholder="Select a data and time"></SfDateTimePicker>
+            <SfDatePicker TValue="DateTime" @bind-Value="@countryRequirementVersion.DateOfRenewal" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false" >
+                <DatePickerEvents TValue="DateTime" ValueChange="@RenewalValueChanged"></DatePickerEvents>
+            </SfDatePicker>
         </div>
     </div>
+
+    <CustomInputText @bind-Value="@countryRequirementVersion.ContactVersion" Label="Contact Version"></CustomInputText>
 
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Requirement Version</label>
+        <label class="col-sm-2 col-form-label">Contact Revision Date</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="countryRequirementVersion.RequirementVersion" />
+            <SfDatePicker TValue="DateTime" @bind-Value="@countryRequirementVersion.ContactRevisionDate" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false">
+                <DatePickerEvents TValue="DateTime" ValueChange="@ContactRevisionValueChanged"></DatePickerEvents>
+            </SfDatePicker>
         </div>
     </div>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Contact Version</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="countryRequirementVersion.ContactVersion" />
-        </div>
-    </div>
+    <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="CreateCountryRequirementVersion">Create</button>
-    </div>
+    <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
-    </div>
-</form>
+    <ValidationSummary></ValidationSummary>
+</EditForm>
 
 @code {
     [Parameter]
@@ -73,23 +57,28 @@
 
     public CountryRequirementVersion countryRequirementVersion = new CountryRequirementVersion();
 
-    public int IPTypeId { get; set; }
-
-    public DateTime DateValue { get; set; } = DateTime.Now;
+    public int IPTypeId {
+        get
+        {
+            if(countryRequirementVersion.InvestigationalProductType != null)
+            {
+                return countryRequirementVersion.InvestigationalProductType.Id;
+            }
+            return 0;
+        }
+        set => countryRequirementVersion.InvestigationalProductType = investigationalProductTypes.Single(c => c.Id == value);
+    }
 
     protected override async Task OnInitializedAsync()
     {
         investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
+        countryRequirementVersion.Country = await countryRepository.GetByName(Country);
+        countryRequirementVersion.DateOfRenewal = DateTime.Now;
+        countryRequirementVersion.ContactRevisionDate = DateTime.Now;
     }
 
     protected async void CreateCountryRequirementVersion()
     {
-        countryRequirementVersion.Country = await countryRepository.GetByName(Country);
-        countryRequirementVersion.InvestigationalProductType = await IPTypeRepository.GetById(IPTypeId);
-        countryRequirementVersion.Created = DateTime.UtcNow;
-        countryRequirementVersion.Modified = DateTime.UtcNow;
-        countryRequirementVersion.ContactRevisionDate = DateTime.UtcNow;
-        countryRequirementVersion.DateOfRenewal = DateValue;
         await countryRequirementVersionRepository.Create(countryRequirementVersion);
         NavigationManager.NavigateTo($"{Country}/CountryRequirementsVersion/Index");
     }
@@ -97,5 +86,15 @@
     private void Cancel()
     {
         NavigationManager.NavigateTo($"{Country}/CountryRequirementsVersion/Index");
+    }
+
+    private void RenewalValueChanged(ChangedEventArgs<DateTime> args)
+    {
+        countryRequirementVersion.DateOfRenewal = args.Value;
+    }
+
+    private void ContactRevisionValueChanged(ChangedEventArgs<DateTime> args)
+    {
+        countryRequirementVersion.ContactRevisionDate = args.Value;
     }
 }

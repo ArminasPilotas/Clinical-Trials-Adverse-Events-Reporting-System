@@ -2,6 +2,7 @@
 
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
+@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
 @inject InstitutionRepository institutionRepository
 @inject NavigationManager NavigationManager
@@ -9,107 +10,44 @@
 
 @if (institution is null)
 {
-
+    <p><em>Loading...</em></p>
 }
 
 else
 {
-<form>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Institution Name</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Name" readonly />
-        </div>
-    </div>
+    <form>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Institution Type</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.InstitutionType.Name" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.Name" labelName="Institution Name" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Address</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Address" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.InstitutionType.Name" labelName="Institution Type" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Phone</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Phone" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.Address" labelName="Address" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Fax</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Fax" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.Phone" labelName="Phone" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Email</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.Email" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.Fax" labelName="Fax" readOnly="true"></InputComponent>
 
+        <InputComponent @bind-inputName="@institution.Email" labelName="Email" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Alternate Address</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.AlternateAddress" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.AlternateAddress" labelName="Alternate Address" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Alternate Phone</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.AlternatePhone" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.AlternatePhone" labelName="Alternate Phone" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Alternate Fax</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.AlternateFax" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.AlternateFax" labelName="Alternate Fax" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Alternate Email</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.AlternateEmail" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.AlternateEmail" labelName="Alternate Email" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">City</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.City" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.City" labelName="City" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Registration Number</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="institution.RegNo" readonly />
-        </div>
-    </div>
+        <InputComponent @bind-inputName="@institution.RegNo" labelName="Registration Number" readOnly="true"></InputComponent>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="DeleteInstitutions">Delete</button>
-    </div>
+        <ButtonComponent buttonText="Delete" buttonType="button" buttonStyle="primary" onButtonClick="@(() => DeleteInstitutions())"></ButtonComponent>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
-    </div>
-</form>
+        <ButtonComponent buttonText="Cancel" buttonType="button" buttonStyle="danger" onButtonClick="@Cancel"></ButtonComponent>
+        
+    </form>
 
-}
+    }
 
 
 @code {
@@ -125,7 +63,7 @@ else
         institution = await Task.Run(() => institutionRepository.GetById(Convert.ToInt32(Id)));
     }
 
-    protected async void DeleteInstitutions() //TODO check for authority. Question Do i need to delete authority based on Institution?
+    protected async Task DeleteInstitutions()
     {
         await institutionRepository.Delete(institution);
         NavigationManager.NavigateTo($"{Country}/Institution/Index");

@@ -18,6 +18,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Create (Authority authority)
         {
+            authority.Created = DateTime.UtcNow;
             await _dbContext.AddAsync(authority);
             await _dbContext.SaveChangesAsync();
         }
@@ -50,6 +51,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Update (Authority authority)
         {
+            authority.Modified = DateTime.UtcNow;
             _dbContext.Authorities.Update(authority);
             await _dbContext.SaveChangesAsync();
         }

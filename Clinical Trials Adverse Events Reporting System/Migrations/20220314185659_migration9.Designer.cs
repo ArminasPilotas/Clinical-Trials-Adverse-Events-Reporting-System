@@ -4,14 +4,16 @@ using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Migrations
 {
     [DbContext(typeof(CTAERS))]
-    partial class CTAERSModelSnapshot : ModelSnapshot
+    [Migration("20220314185659_migration9")]
+    partial class migration9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

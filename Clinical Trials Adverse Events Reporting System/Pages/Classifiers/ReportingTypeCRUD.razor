@@ -3,13 +3,32 @@
 
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
-@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents 
+@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
 @inject IClassifierRepository<ReportingType> classifierRepository
 @inject NavigationManager NavigationManager
 
-<ClassifierCRUD Classifier="@classifier" Action="@Action" @bind-Name="@classifier.Name" @bind-ModifyReason="@classifier.ModifyReason"
-                OnCreateClick="CreateClassifier" OnEditClick="UpdateClassifier" OnDeleteClick="DeleteClassifier"></ClassifierCRUD>
+@if (Action != "Delete")
+{
+    <EditForm Model="@classifier" OnValidSubmit="@OnValidSubmit" @onreset="@Cancel">
+
+        <DataAnnotationsValidator />
+
+        <CustomInputText @bind-Value="@classifier.Name" Label="Name"></CustomInputText>
+
+        @if (Action == "Edit")
+        {
+            <CustomInputText @bind-Value="@classifier.ModifyReason" Label="Modify Reason"></CustomInputText>
+            <ButtonComponent buttonStyle="primary" buttonText="Update" buttonType="submit"></ButtonComponent>
+        }
+        @if (Action == "Create")
+        {
+            <ButtonComponent buttonStyle="primary" buttonText="Create" buttonType="submit"></ButtonComponent>
+        }
+        <ButtonComponent buttonStyle="danger" buttonText="Cancel" buttonType="reset"></ButtonComponent>
+
+    </EditForm>
+}
 
 
 
@@ -60,5 +79,12 @@
     {
         NavigationManager.NavigateTo("Classifiers/ReportingType/Index");
     }
+
+    private void OnValidSubmit()
+    {
+        if (Action == "Create") CreateClassifier();
+        if (Action == "Edit") UpdateClassifier();
+    }
+
 }
 

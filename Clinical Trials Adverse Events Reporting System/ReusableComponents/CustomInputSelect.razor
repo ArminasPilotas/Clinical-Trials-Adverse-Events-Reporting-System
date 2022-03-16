@@ -1,0 +1,51 @@
+﻿@typeparam TItem
+
+@using System.Linq.Expressions
+@using System.Reflection
+@using Clinical_Trials_Adverse_Events_Reporting_System.Utilities
+
+@if (items != null)
+{
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">@labelName</label>
+        <div class="col-sm-10">
+            <InputSelectNumber class="form-control" Value="@value" ValueChanged="@valueChanged" ValueExpression="@valueExpression">
+                @if (items != null)
+                {
+                    @foreach (var item in items)
+                    {
+                        <option value="@ItemValue(item, "Id")">@ItemValue(item, "Name")</option>
+                    }
+                }
+            </InputSelectNumber>
+            <ValidationMessage For="@valueExpression" />
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public string labelName { get; set; }
+    [Parameter]
+    public int value { get; set; }
+    [Parameter]
+    public EventCallback<int> valueChanged { get; set; }
+    [Parameter]
+    public Expression<Func<int>> valueExpression { get; set; }
+    [Parameter]
+    public List<TItem> items { get; set; }
+
+
+    private string ItemValue(TItem Item, string propertyName)
+    {
+        Type type = Item.GetType();
+        PropertyInfo pInfo = type.GetProperty(propertyName);
+
+        if (pInfo == null) return string.Empty;
+
+        if (pInfo.GetValue(Item, null) is null) return string.Empty;
+
+        return pInfo.GetValue(Item, null).ToString();
+    }
+}

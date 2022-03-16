@@ -31,7 +31,8 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task<List<TEntity>> GetAll()
         {
-            return await _dbContext.Set<TEntity>().AsNoTracking().ToListAsync();
+            // return await _dbContext.Set<TEntity>().AsNoTracking().ToListAsync();
+            return await _dbContext.Set<TEntity>().ToListAsync();
         }
 
         public async Task<TEntity> GetById(int id)

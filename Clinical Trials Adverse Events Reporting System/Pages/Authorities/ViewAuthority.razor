@@ -2,6 +2,7 @@
 
 @using Clinical_Trials_Adverse_Events_Reporting_System.Entities
 @using Clinical_Trials_Adverse_Events_Reporting_System.Data
+@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
 @if (authority is null)
 {
@@ -10,65 +11,25 @@
 else
 {
 <form>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Country</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="authority.Country.Name" readonly />
-        </div>
-    </div>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Institution</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="authority.Institution.Name" readonly />
-        </div>
-    </div>
+    <InputComponent inputName="@authority.Country.Name" labelName="Country" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Institution Type</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="authority.InstitutionType.Name" readonly />
-        </div>
-    </div>
+    <InputComponent inputName="@authority.Institution.Name" labelName="Institution" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Investigational Product Type</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="authority.InvestigationalProductType.Name" readonly />
-        </div>
-    </div>
+    <InputComponent inputName="@authority.InstitutionType.Name" labelName="Institution Type" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Author</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="authority.Author" readonly />
-        </div>
-    </div>
+    <InputComponent inputName="@authority.InvestigationalProductType.Name" labelName="Investigational Product Type" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Editor</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="authority.Editor" readonly />
-        </div>
-    </div>
+    <InputComponent inputName="@authority.Author" labelName="Author" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Created</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="authority.Created" readonly />
-        </div>
-    </div>
+    <InputComponent inputName="@authority.Editor" labelName="Editor" readOnly="true"></InputComponent>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Modified</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="authority.Modified" readonly />
-        </div>
-    </div>
+    <InputComponent inputName="@authority.Created.ToString()" labelName="Created" readOnly="true"></InputComponent>
 
-    <div class="col-md-12 text-center">
-        <button type="button" class="btn btn-danger btn-lg btn-block" @onclick="Cancel">Cancel</button>
-    </div>
+    <InputComponent inputName="@authority.Modified.ToString()" labelName="Modified" readOnly="true"></InputComponent>
+
+    <ButtonComponent buttonText="Cancel" buttonType="danger" onButtonClick="@Cancel"></ButtonComponent>
+
 </form>
 }
 

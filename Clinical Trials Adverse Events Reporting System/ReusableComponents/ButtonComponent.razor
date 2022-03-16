@@ -1,0 +1,15 @@
+﻿<div class="col-md-12 text-center">
+    <button type="@buttonType" class="btn btn-@buttonStyle btn-lg btn-block" @onclick="onButtonClick">@buttonText</button>
+</div>
+
+@code {
+    [Parameter]
+    public string buttonText { get; set; }
+    [Parameter]
+    public string buttonStyle { get; set; }
+    [Parameter]
+    public string buttonType { get; set; }
+    [Parameter]
+    public EventCallback onButtonClick { get; set; }
+
+}

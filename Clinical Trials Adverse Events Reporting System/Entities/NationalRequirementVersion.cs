@@ -18,6 +18,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Entities
         public string Editor { get; set; }
         public string Author { get; set; }
 
+        [Required]
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }
         public string ModifyReason { get; set; }

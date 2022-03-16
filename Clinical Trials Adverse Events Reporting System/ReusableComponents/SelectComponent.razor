@@ -1,0 +1,53 @@
+﻿@typeparam TItem
+
+@using System.Reflection
+
+
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">@labelName</label>
+    <div class="col-sm-10">
+        <select class="form-control" @oninput="OnSelectedIdChanged" value="@selectedId">
+            <option selected>Choose</option>
+            @if (items != null)
+            {
+                @foreach (var item in items)
+                {
+                    <option value="@ItemValue(item,"Id")">@ItemValue(item,propertyName)</option>
+                }
+            }
+        </select>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<TItem> items { get; set; }
+    [Parameter]
+    public string propertyName { get; set; }
+    [Parameter]
+    public int selectedId { get; set; }
+    [Parameter]
+    public string labelName { get; set; }
+    [Parameter]
+    public EventCallback<int> selectedIdChanged { get; set; }
+
+    private string ItemValue(TItem Item,string propertyName)
+    {
+        Type type = Item.GetType();
+        PropertyInfo pInfo = type.GetProperty(propertyName);
+
+        if (pInfo == null) return string.Empty;
+
+        if (pInfo.GetValue(Item, null) is null) return string.Empty;
+
+        return pInfo.GetValue(Item, null).ToString();
+    }
+
+    private async Task OnSelectedIdChanged(ChangeEventArgs e)
+    {
+        selectedId = Convert.ToInt32(e.Value.ToString());
+
+        await selectedIdChanged.InvokeAsync(selectedId);
+    }
+
+}

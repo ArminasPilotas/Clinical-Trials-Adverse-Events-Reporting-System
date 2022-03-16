@@ -1,69 +1,73 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Clinical Trials Adverse Events Reporting System</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Adverse Event Reporting</a>
+        <button class="navbar-toggler @NavButtonCssClass" type="button" aria-controls="navbarCollapse"
+                aria-label="Toggle navigation" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse @NavBarCssClass" id="navbarCollapse" @onclick="ToggleNavMenu">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Classifiers/ReportingType/Index">
-                <span class="oi oi-home" aria-hidden="true"></span> Reporting Type
-            </NavLink>
-        </li>
+                    <li class="nav-item ">
+                        <NavLink class="nav-link" href="/Classifiers/ReportingType/Index">
+                            <span class="oi oi-home" aria-hidden="true"></span> Reporting Type
+                        </NavLink>
+                    </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Classifiers/ReportType/Index">
-                <span class="oi oi-home" aria-hidden="true"></span> Report Type
-            </NavLink>
-        </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Classifiers/ReportType/Index">
+                            <span class="oi oi-home" aria-hidden="true"></span> Report Type
+                        </NavLink>
+                    </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Classifiers/ReportingMethod/Index">
-                <span class="oi oi-home" aria-hidden="true"></span> Reporting Method
-            </NavLink>
-        </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Classifiers/ReportingMethod/Index">
+                            <span class="oi oi-home" aria-hidden="true"></span> Reporting Method
+                        </NavLink>
+                    </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Classifiers/InstitutionType/Index">
-                <span class="oi oi-home" aria-hidden="true"></span> Institution Type
-            </NavLink>
-        </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Classifiers/InstitutionType/Index">
+                            <span class="oi oi-home" aria-hidden="true"></span> Institution Type
+                        </NavLink>
+                    </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Classifiers/SusarType/Index">
-                <span class="oi oi-home" aria-hidden="true"></span> Susar Type
-            </NavLink>
-        </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Classifiers/SusarType/Index">
+                            <span class="oi oi-home" aria-hidden="true"></span> Susar Type
+                        </NavLink>
+                    </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Classifiers/CaseOrigin/Index">
-                <span class="oi oi-home" aria-hidden="true"></span> Case Origin
-            </NavLink>
-        </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Classifiers/CaseOrigin/Index">
+                            <span class="oi oi-home" aria-hidden="true"></span> Case Origin
+                        </NavLink>
+                    </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Classifiers/InvestigationalProductType/Index">
-                <span class="oi oi-home" aria-hidden="true"></span> Investigational Product Type
-            </NavLink>
-        </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Classifiers/InvestigationalProductType/Index">
+                            <span class="oi oi-home" aria-hidden="true"></span> Investigational Product Type
+                        </NavLink>
+                    </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Countries/Index">
-                <span class="oi oi-home" aria-hidden="true"></span> Countries
-            </NavLink>
-        </li>
-    </ul>
-</div>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Countries/Index">
+                            <span class="oi oi-home" aria-hidden="true"></span> Countries
+                        </NavLink>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-@code {
-    private bool collapseNavMenu = true;
+    @code {
+        private bool expandSubNav;
+        private bool collapseNavMenu = true;
+        private string? NavBarCssClass => collapseNavMenu ? null : "show";
+        private string? NavButtonCssClass => collapseNavMenu ? "collapsed" : null;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
+        private void ToggleNavMenu()
+        {
+            collapseNavMenu = !collapseNavMenu;
+        }
     }
-}

@@ -12,11 +12,11 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Entities
         public int Id { get; set; }
         [Required]
         public Country Country { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Investigational Product Type must be chosen")]
         public InvestigationalProductType InvestigationalProductType { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Institution Type must be chosen")]
         public InstitutionType InstitutionType { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Institution must be chosen")]
         public Institution Institution { get; set; }
 
         public string Editor { get; set; }
