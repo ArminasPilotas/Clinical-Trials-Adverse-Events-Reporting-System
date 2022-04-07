@@ -47,7 +47,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Entities
         [MinLength(1, ErrorMessage = "City name must be at least 1 character")]
         public string City { get; set; }
 
-        public string RegNo { get; set; }
+        public string RegNo { get; set; } //site number
 
         public string StudyNumber { get; set; }
 

@@ -1,13 +1,10 @@
 ﻿@page "/{Country}/Authority/Add"
 
-@using Clinical_Trials_Adverse_Events_Reporting_System.Data
-@using Clinical_Trials_Adverse_Events_Reporting_System.Entities 
-@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
-<EditForm Model="@authority" OnValidSubmit="@CreateAuthority" @onreset="@Cancel">
+<EditForm Model="@authority" OnValidSubmit="@CreateAuthority" @onreset="@Cancel"> <!--TODO ON SUBMIT-->
     <DataAnnotationsValidator />
 
-    <CustomInputSelect @bind-value="@institutionId" labelName="Institution Name" items="@institutions"></CustomInputSelect>
+    <CustomInputSelect @bind-value="@InstitutionId" labelName="Institution Name" items="@institutions"></CustomInputSelect>
 
     <CustomInputSelect @bind-value="@IPTypeId" labelName="Investigational Product Type" items="@investigationalProductTypes"></CustomInputSelect>
 
@@ -36,6 +33,9 @@
     IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
     [Inject]
     InstitutionRepository institutionRepository { get; set; }
+    [Inject]
+    IValidator<Authority> authorityValidator { get; set; }
+
 
     Authority authority = new Authority();
 
@@ -43,25 +43,58 @@
     List<InstitutionType> institutionTypes { get; set; }
     List<Institution> institutions { get; set; }
 
-    public int institutionId { get; set; }
-    public int IPTypeId { get; set; }
-    public int InstitutionTypeId { get; set; }
+    public int InstitutionId
+    {
+        get
+        {
+            if(authority.Institution != null)
+            {
+                return authority.Institution.Id;
+            }
+            return 0;
+        }
+        set => authority.Institution = institutions.Single(c => c.Id == value);
+    }
+    public int IPTypeId
+    {
+        get
+        {
+            if (authority.InvestigationalProductType != null)
+            {
+                return authority.InvestigationalProductType.Id;
+            }
+            return 0;
+        }
+        set => authority.InvestigationalProductType = investigationalProductTypes.Single(c => c.Id == value);
+    }
+    public int InstitutionTypeId
+    {
+        get
+        {
+            if (authority.InstitutionType != null)
+            {
+                return authority.InstitutionType.Id;
+            }
+            return 0;
+        }
+        set => authority.InstitutionType = institutionTypes.Single(c => c.Id == value);
+    }
 
     protected override async Task OnInitializedAsync()
     {
         investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
         institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
         institutions = await Task.Run(() => institutionRepository.GetByCountry(Country));
+        authority.Country = await Task.Run(() => countryRepository.GetByName(Country));
     }
 
     protected async void CreateAuthority()
     {
-        authority.Country = await countryRepository.GetByName(Country);
-        authority.Institution = await institutionRepository.GetById(institutionId);
-        authority.InstitutionType = await institutionTypeRepository.GetById(InstitutionTypeId);
-        authority.InvestigationalProductType = await IPTypeRepository.GetById(IPTypeId);
-        await authorityRepository.Create(authority);
-        NavigationManager.NavigateTo($"/{Country}/Authorities/Index");
+        if (authorityValidator.Validate(authority))
+        {
+            await authorityRepository.Create(authority);
+            NavigationManager.NavigateTo($"/{Country}/Authorities/Index");
+        }
     }
 
     private void Cancel()

@@ -1,10 +1,5 @@
 ﻿@page "/{Country}/NationalRequirements/Add"
 
-@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
-@using Clinical_Trials_Adverse_Events_Reporting_System.Data
-@using Microsoft.EntityFrameworkCore
-@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
-
 <EditForm Model="@nationalRequirement" OnValidSubmit="CreateNationalRequirement" @onreset="@Cancel">
 
     <DataAnnotationsValidator></DataAnnotationsValidator>

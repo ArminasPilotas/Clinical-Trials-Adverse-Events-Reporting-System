@@ -33,6 +33,8 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Entities
         public DbSet<Authority> Authorities { get; set; }
         public DbSet<CountryRequirementVersion> CountryRequirementVersions { get; set; }
         public DbSet<NationalRequirementVersion> NationalRequirementCountryRequirementVersions { get; set; }
+        public DbSet<AdverseEvent> AdverseEvents { get; set; }
+        public DbSet<ReportedInstitution> ReportedInstitutions { get; set; }
     }
 
 }

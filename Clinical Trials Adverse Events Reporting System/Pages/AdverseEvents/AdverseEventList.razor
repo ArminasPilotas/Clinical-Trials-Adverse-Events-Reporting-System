@@ -1,0 +1,82 @@
+﻿@page "/AdverseEvents/Index"
+
+<NavLink>
+    <a href="/AdverseEvent/Add">
+        <span class="oi oi-plus" aria-hidden="true">Create Adverse Event</span>
+    </a>
+</NavLink>
+@if (adverseEvents is null)
+{
+                <p><em>Loading...</em></p>
+}
+else
+{
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Investigational Product Type</th>
+            <th scope="col">Study Number</th>
+            <th scope="col">Occurred On</th>
+            <th scope="col">Document</th>
+            <th scope="col">Description</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+         @foreach (var adverseEvent in adverseEvents)
+         {
+                <tr>
+                    <td>@adverseEvent.Id</td>
+                    <td>@adverseEvent.InvestigationalProductType.Name</td>
+                    <td>@adverseEvent.StudyNo</td>
+                    <td>@adverseEvent.OccurredOn</td>
+                    <td>Mocking Document Review</td>
+                    <td>@adverseEvent.Description</td>
+                    <td>
+                        @if (!reportedInstitutions.Where(c => c.AdverseEvent == adverseEvent).Any())
+                        {
+                        <a class="nav-link" href="/AdverseEvent/Edit/@adverseEvent.Id">
+                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                        </a>
+                        <a class="nav-link" @onclick="@(() => ReportAdverseEvent(adverseEvent))">
+                            <span class="oi oi-bell" aria-hidden="true">Report</span>
+                        </a>
+                        }
+                    else
+                    {
+                        <a class="nav-link" href="/AdverseEvent/@adverseEvent.Id/ReportedInstitutions">
+                            <span class="oi oi-book" aria-hidden="true">Reported Institutions</span>
+                        </a>
+                    }
+                    </td>
+                </tr>
+         }
+    </tbody>
+</table>
+}
+
+@code {
+    [Inject]
+    AdverseEventRepository AdverseEventRepository { get; set; }
+    [Inject]
+    ReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    List<AdverseEvent> adverseEvents;
+    List<ReportedInstitution> reportedInstitutions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        adverseEvents = await Task.Run(() => AdverseEventRepository.GetAll());
+        reportedInstitutions = await Task.Run(() => ReportedInstitutionRepository.GetAll());
+    }
+
+    protected async void ReportAdverseEvent(AdverseEvent adverseEvent)
+    {
+        await Task.Run(() => ReportedInstitutionRepository.Create(adverseEvent));
+        StateHasChanged();
+    }
+}

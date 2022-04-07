@@ -1,0 +1,61 @@
+﻿@page "/AdverseEvent/{AdverseEventId}/ReportedInstitutions"
+
+@if(reportedInstitutions is null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Country</th>
+                            <th scope="col">Institution</th>
+                            <th scope="col">Institution Type</th>
+                            <th scope="col">Institution Address</th>
+                            <th scope="col">Institution Email</th>
+                            <th scope="col">Report By</th>
+                            <th scope="col">Reported On</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach(var reportedInstitution in reportedInstitutions)
+                {
+                    <tr>
+                        <td>@reportedInstitution.Institution.Country.Name</td>
+                        <td>@reportedInstitution.Institution.Name</td>
+                        <td>@reportedInstitution.Institution.InstitutionType.Name</td>
+                        <td>@reportedInstitution.Institution.Address</td>
+                        <td>@reportedInstitution.Institution.Email</td>
+                        <td>@reportedInstitution.ReportBy.ToShortDateString()</td>
+                        @if (reportedInstitution.ReportedOn != DateTime.MinValue)
+                        {
+                        <td>@reportedInstitution.ReportedOn.ToShortDateString()</td>
+                        }
+                    else
+                    {
+                    <td>
+                        <SfDatePicker TValue="DateTime" @bind-Value="@reportedInstitution.ReportedOn" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false">
+                            <DatePickerEvents TValue="DateTime"></DatePickerEvents>
+                        </SfDatePicker>
+                    </td>
+                    }
+                    </tr>
+                }
+                    </tbody>
+                </table>
+            }
+@code {
+    [Parameter]
+    public string AdverseEventId { get; set; }
+    [Inject]
+    ReportedInstitutionRepository ReportedInstitutionRepository { get; set;}
+
+    List<ReportedInstitution> reportedInstitutions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        reportedInstitutions = await Task.Run(() => ReportedInstitutionRepository.GetByAdverseEvent(Convert.ToInt32(AdverseEventId)));
+    }
+}

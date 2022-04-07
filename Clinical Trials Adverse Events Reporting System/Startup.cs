@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Syncfusion.Blazor;
+using Clinical_Trials_Adverse_Events_Reporting_System.Validation;
+using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System
 {
@@ -40,6 +42,12 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
             services.AddScoped<CountryRequirementVersionRepository>();
             services.AddScoped<NationalRequirementVersionRepository>();
             services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+            services.AddScoped(typeof(IValidator<Authority>), typeof(AuthorityValidator));
+            services.AddScoped(typeof(IValidator<Institution>), typeof(InstitutionValidator));
+            services.AddScoped(typeof(IValidator<CountryRequirementVersion>), typeof(CountryRequirementVersionValidator));
+            services.AddScoped(typeof(IValidator<>), typeof(ClassifierValidator<>));
+            services.AddScoped<AdverseEventRepository>();
+            services.AddScoped<ReportedInstitutionRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,8 +1,5 @@
 ﻿@page "/{Country}/CountryRequirementsVersion/Add"
 
-@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
-@using Clinical_Trials_Adverse_Events_Reporting_System.Data
-@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents 
 
 <EditForm Model="@countryRequirementVersion" OnValidSubmit="@CreateCountryRequirementVersion" @onreset="@Cancel">
 
@@ -42,18 +39,20 @@
 </EditForm>
 
 @code {
-    [Parameter]
-    public string Country { get; set; }
-    [Inject]
-    CountryRepository countryRepository { get; set; }
-    [Inject]
-    IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
-    [Inject]
-    CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
-    [Inject]
-    NavigationManager NavigationManager { get; set; }
+        [Parameter]
+        public string Country { get; set; }
+        [Inject]
+        CountryRepository countryRepository { get; set; }
+        [Inject]
+        IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
+        [Inject]
+        CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
+        [Inject]
+        NavigationManager NavigationManager { get; set; }
+        [Inject]
+        IValidator<CountryRequirementVersion> CountryRequirementVersionValidator { get; set; }
 
-    List<InvestigationalProductType> investigationalProductTypes;
+        List<InvestigationalProductType> investigationalProductTypes;
 
     public CountryRequirementVersion countryRequirementVersion = new CountryRequirementVersion();
 
@@ -79,8 +78,11 @@
 
     protected async void CreateCountryRequirementVersion()
     {
-        await countryRequirementVersionRepository.Create(countryRequirementVersion);
-        NavigationManager.NavigateTo($"{Country}/CountryRequirementsVersion/Index");
+        if (CountryRequirementVersionValidator.Validate(countryRequirementVersion))
+        {
+            await countryRequirementVersionRepository.Create(countryRequirementVersion);
+            NavigationManager.NavigateTo($"{Country}/CountryRequirementsVersion/Index");
+        }
     }
 
     private void Cancel()

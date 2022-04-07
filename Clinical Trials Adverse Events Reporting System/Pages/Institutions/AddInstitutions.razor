@@ -1,89 +1,110 @@
-﻿@page "/{Country}/Institution/Add" 
+﻿@page "/{Country}/Institution/Add"
 
-@using Clinical_Trials_Adverse_Events_Reporting_System.Data
-@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
-@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
 @inject InstitutionRepository institutionRepository
 @inject IClassifierRepository<InvestigationalProductType> investigationalProductTypeRepository
 @inject IClassifierRepository<InstitutionType> institutionTypeRepository
-@inject CountryRepository countryRepository 
+@inject CountryRepository countryRepository
 @inject NavigationManager NavigationManager
 
-@if (institution != null)
+@if (editContext != null)
 {
-<EditForm Model="@institution" OnValidSubmit="@AddInstitution" @onreset="@Cancel">
-    <DataAnnotationsValidator />
+    <EditForm EditContext="@editContext" OnSubmit="@AddInstitution" @onreset="@Cancel">
+        <DataAnnotationsValidator />
 
-    <ValidationSummary />
+        <ValidationSummary />
+        <CustomValidationBase @ref="customValidationBase" />
 
-    <CustomInputText @bind-Value="@institution.Name" Label="Institution Name"> </CustomInputText>
+        <CustomInputText @bind-Value="@institution.Name" Label="Institution Name"> </CustomInputText>
 
-    <CustomInputSelect @bind-value="@InstitutionTypeId" labelName="Institution Type" items="@institutionTypes"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@InstitutionTypeId" labelName="Institution Type" items="@institutionTypes"></CustomInputSelect>
 
-    <CustomInputText @bind-Value="@institution.Address" Label="Address"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.Address" Label="Address"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.Phone" Label="Phone"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.Phone" Label="Phone"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.Fax" Label="Fax"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.Fax" Label="Fax"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.Email" Label="Email"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.Email" Label="Email"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.AlternateAddress" Label="Alternate Address"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.AlternateAddress" Label="Alternate Address"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.AlternatePhone" Label="Alternate Phone"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.AlternatePhone" Label="Alternate Phone"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.AlternateFax" Label="Alternate Fax"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.AlternateFax" Label="Alternate Fax"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.AlternateEmail" Label="Alternate Email"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.AlternateEmail" Label="Alternate Email"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.City" Label="City"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.City" Label="City"></CustomInputText>
 
-    <CustomInputText @bind-Value="@institution.RegNo" Label="Registration Number"></CustomInputText>
+        <CustomInputText @bind-Value="@institution.RegNo" Label="Registration Number"></CustomInputText>
 
-    <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
+        <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
 
-    <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
+        <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
 
-</EditForm>
+    </EditForm>
 }
 
-    @code {
-        [Parameter]
-        public string Country { get; set; }
+@code {
+    [Parameter]
+    public string Country { get; set; }
 
-        public Institution institution = new Institution();
-        public List<InstitutionType> institutionTypes { get; set; }
-        public List<Country> countries { get; set; }
+    public Institution institution = new Institution();
+    public List<InstitutionType> institutionTypes { get; set; }
+    public List<Country> countries { get; set; }
 
+    [Inject]
+    IValidator<Institution> InstitutionValidator { get; set; }
+    private CustomValidationBase customValidationBase;
+    private EditContext editContext;
 
-        public int InstitutionTypeId
+    public int InstitutionTypeId
+    {
+        get
         {
-            get {
-                if (institution.InstitutionType != null)
-                {
-                    return institution.InstitutionType.Id;
-                }
-                return 0;
+            if (institution.InstitutionType != null)
+            {
+                return institution.InstitutionType.Id;
             }
-            set => institution.InstitutionType = institutionTypes.Single(c => c.Id == value);
+            return 0;
         }
+        set => institution.InstitutionType = institutionTypes.Single(c => c.Id == value);
+    }
 
-        protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
+    {
+        institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
+        countries = await Task.Run(() => countryRepository.GetAll());
+        institution.Country = countries.Where(c => c.Name == Country).SingleOrDefault();
+        editContext = new EditContext(institution);
+    }
+
+    protected async void AddInstitution()
+    {
+        customValidationBase.ClearErrors();
+
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!InstitutionValidator.Validate(institution))
         {
-            institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
-            countries = await Task.Run(() => countryRepository.GetAll());
-            institution.Country = countries.Where(c => c.Name == Country).SingleOrDefault();
+            errors.Add(nameof(institution.Name),
+                new List<string>() { "Institution Name field must be unique" });
         }
-
-        protected async void AddInstitution()
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
         {
             await institutionRepository.Create(institution);
-            NavigationManager.NavigateTo("");
-        }
-
-        private void Cancel()
-        {
-            NavigationManager.NavigateTo("");
+            NavigationManager.NavigateTo($"{Country}/Institution/Index");
         }
     }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo($"{Country}/Institution/Index");
+    }
+}

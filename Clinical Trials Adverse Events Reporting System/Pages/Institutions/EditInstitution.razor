@@ -1,8 +1,5 @@
 ﻿@page "/{Country}/Institution/Edit/{Id}"
 
-@using Clinical_Trials_Adverse_Events_Reporting_System.Entities
-@using Clinical_Trials_Adverse_Events_Reporting_System.Data
-@using Clinical_Trials_Adverse_Events_Reporting_System.ReusableComponents
 
 @if (institution is null)
 {
@@ -55,22 +52,24 @@ else
     }
 
 @code {
-    [Parameter]
-    public string Country { get; set; }
-    [Parameter]
-    public string Id { get; set; }
+        [Parameter]
+        public string Country { get; set; }
+        [Parameter]
+        public string Id { get; set; }
 
-    [Inject]
-    NavigationManager NavigationManager { get; set; }
-    [Inject]
-    InstitutionRepository institutionRepository { get; set; }
-    [Inject]
-    IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
-    [Inject]
-    CountryRepository CountryRepository { get; set; }
+        [Inject]
+        NavigationManager NavigationManager { get; set; }
+        [Inject]
+        InstitutionRepository institutionRepository { get; set; }
+        [Inject]
+        IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
+        [Inject]
+        CountryRepository CountryRepository { get; set; }
+        [Inject]
+        IValidator<Institution> InstitutionValidator { get; set; }
 
-    Institution institution = new Institution();
-    List<InstitutionType> institutionTypes;
+        Institution institution = new Institution();
+        List<InstitutionType> institutionTypes;
 
 
     public int InstitutionTypeId
@@ -95,8 +94,11 @@ else
 
     protected async void UpdateInstitution()
     {
-        await institutionRepository.Update(institution);
-        NavigationManager.NavigateTo($"{Country}/Institution/Index");
+        if (InstitutionValidator.Validate(institution))
+        {
+            await institutionRepository.Update(institution);
+            NavigationManager.NavigateTo($"{Country}/Institution/Index");
+        }
     }
 
     private void Cancel()
