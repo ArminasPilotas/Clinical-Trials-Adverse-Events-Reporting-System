@@ -22,13 +22,13 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
             institutions.AddRange(await _dbContext.Institutions
                 .Include(institution => institution.InstitutionType)
                 .Include(Institution => Institution.Country)
-                .Where(institution => institution.StudyNumber == adverseEvent.StudyNo && !string.IsNullOrEmpty(institution.StudyNumber))
+                .Where(institution => institution.StudyNumber == adverseEvent.StudyNo && !string.IsNullOrEmpty(institution.RegNo))
                 .ToListAsync());
 
             institutions.AddRange(await _dbContext.Authorities
                 .Include(authority => authority.Institution.InstitutionType)
                 .Include(authority => authority.Institution.Country)
-                .Where(authority => authority.InvestigationalProductType.Id == adverseEvent.InvestigationalProductType.Id)
+                .Where(authority => authority.InvestigationalProductType.Id == adverseEvent.InvestigationalProductType.Id && authority.Institution.RegNo == null)
                 .Select(authority => authority.Institution)
                 .ToListAsync());
 
@@ -36,15 +36,20 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
             {
                 NationalRequirement nationalRequirement = await _dbContext.NationalRequirements
                     .Where(natReq => natReq.InstitutionType.Id == institution.InstitutionType.Id
-                    && natReq.InvestigationalProductType.Id == adverseEvent.InvestigationalProductType.Id)
+                    && natReq.InvestigationalProductType.Id == adverseEvent.InvestigationalProductType.Id
+                    && natReq.Country.Id == institution.Country.Id
+                    && natReq.Valid == true)
                     .FirstOrDefaultAsync();
 
-                ReportedInstitution reportedInstitution = new ReportedInstitution();
-                reportedInstitution.AdverseEvent = adverseEvent;
-                reportedInstitution.Institution = institution;
-                reportedInstitution.ReportBy = adverseEvent.OccurredOn.AddDays(nationalRequirement.Days);
+                if (nationalRequirement != null)
+                {
+                    ReportedInstitution reportedInstitution = new ReportedInstitution();
+                    reportedInstitution.AdverseEvent = adverseEvent;
+                    reportedInstitution.Institution = institution;
+                    reportedInstitution.ReportBy = adverseEvent.OccurredOn.AddDays(nationalRequirement.Days);
 
-                await _dbContext.AddAsync(reportedInstitution);
+                    await _dbContext.AddAsync(reportedInstitution);
+                }
             }
             await _dbContext.SaveChangesAsync();
         }
@@ -61,8 +66,16 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
             return await _dbContext.ReportedInstitutions
                 .Where(c => c.AdverseEvent.Id == id)
                 .Include(c => c.Institution.Country)
-                .Include(c => c.Institution.InstitutionType)
+                .Include(c => c.Institution.InstitutionType                )
                 .ToListAsync();
         }
+
+        public async Task Update(ReportedInstitution reportedInstitution)
+        {
+            reportedInstitution.ReportedOn = DateTime.UtcNow;
+            _dbContext.ReportedInstitutions.Update(reportedInstitution);
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }
