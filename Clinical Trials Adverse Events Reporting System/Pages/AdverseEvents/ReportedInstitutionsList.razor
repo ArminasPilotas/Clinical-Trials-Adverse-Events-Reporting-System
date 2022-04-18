@@ -52,12 +52,29 @@ else
     </table>
 
     <div id="container">
-        <button id="button1" class="btn btn-primary" @onclick="@(async () => await ForceReportButtonClicked())">Force Report</button>
-        <button id="button2" class="btn btn-primary" @onclick="@(async () => await ReportByEmailButtonClicked())">Report By Sending Email</button>
+        <button id="button1" class="btn btn-primary" @onclick="() => OpenForceReportDialog()">Force Report</button>
+        <button id="button2" class="btn btn-primary" @onclick="() => OpenReportByEmailDialog()">Report By Sending Email</button>
     </div>
 
+    @if (ForceReportDialogOpen)
+    {
+    <ModalDialog
+                 Title="Are you sure?"
+                 Text="Do you want force report adverse event to institutions?"
+                 OnClose="@OnForceReportDialogClose">
+        
+    </ModalDialog>
+     }
+    @if (ReportByEmailDialogOpen) { 
+        <ModalDialog
+                     Title="Are you sure?"
+                     Text="Do you want report adverse event by email to institutions?"
+                     OnClose="@OnReportByEmailDialogClose">
+        </ModalDialog>
+         }
 
-}
+
+    }
 @code {
     [Parameter]
     public string AdverseEventId { get; set; }
@@ -65,6 +82,9 @@ else
     ReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
     private List<int> CheckedValues { get; set; }
     private bool ParentCheckboxClick { get; set; }
+    //private Mailer mailer;
+    public bool ForceReportDialogOpen { get; set; }
+    public bool ReportByEmailDialogOpen { get; set; }
 
     List<ReportedInstitution> reportedInstitutions;
 
@@ -72,6 +92,7 @@ else
     {
         reportedInstitutions = await Task.Run(() => ReportedInstitutionRepository.GetByAdverseEvent(Convert.ToInt32(AdverseEventId)));
         CheckedValues = new List<int>();
+        // mailer = new Mailer();
     }
 
     private void CheckboxClicked(int Id, object checkedValue)
@@ -91,22 +112,45 @@ else
             }
         }
     }
-    private async Task ForceReportButtonClicked()
+
+    private async Task OnForceReportDialogClose(bool accepted)
     {
-        foreach(var checkedBoxes in CheckedValues)
+        if (accepted)
         {
-            await Task.Run(() => ReportedInstitutionRepository.Update(reportedInstitutions.FirstOrDefault(c => c.Id == checkedBoxes)));
+            foreach (var checkedBoxes in CheckedValues)
+            {
+                await Task.Run(() => ReportedInstitutionRepository.Update(reportedInstitutions.FirstOrDefault(c => c.Id == checkedBoxes)));
+            }
+            CheckedValues.Clear();
         }
-        CheckedValues.Clear();
+        ForceReportDialogOpen = false;
         StateHasChanged();
     }
-    private async Task ReportByEmailButtonClicked() //TODO : report to email
+
+    private void OpenForceReportDialog()
     {
-        foreach (var checkedBoxes in CheckedValues)
+        ForceReportDialogOpen = true;
+        StateHasChanged();
+    }
+
+    private async Task OnReportByEmailDialogClose(bool accepted)
+    {
+        if (accepted)
         {
-            await Task.Run(() => ReportedInstitutionRepository.Update(reportedInstitutions.FirstOrDefault(c => c.Id == checkedBoxes)));
+            foreach (var checkedBoxes in CheckedValues)
+            {
+                await Task.Run(() => ReportedInstitutionRepository.Update(reportedInstitutions.FirstOrDefault(c => c.Id == checkedBoxes)));
+            }
+            //mailer.SendEmail("arminas.pilotas@gmail.com", "Arminas", "AdverseEventTEST", "NO");
+            CheckedValues.Clear();
         }
-        CheckedValues.Clear();
+        ReportByEmailDialogOpen = false;
+        StateHasChanged();
+    }
+
+    private void OpenReportByEmailDialog()
+    {
+        ReportByEmailDialogOpen = true;
         StateHasChanged();
     }
 }

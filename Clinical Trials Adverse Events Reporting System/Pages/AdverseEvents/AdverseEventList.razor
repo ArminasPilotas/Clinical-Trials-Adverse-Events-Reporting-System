@@ -40,7 +40,7 @@ else
                         <a class="nav-link" href="/AdverseEvent/Edit/@adverseEvent.Id">
                             <span class="oi oi-pencil" aria-hidden="true">Edit</span>
                         </a>
-                        <a class="nav-link" @onclick="@(() => ReportAdverseEvent(adverseEvent))">
+                        <a class="nav-link" @onclick="() => OpenReportDialog(adverseEvent))">
                             <span class="oi oi-bell" aria-hidden="true">Report</span>
                         </a>
                         }
@@ -55,6 +55,13 @@ else
          }
     </tbody>
 </table>
+    @if (ReportDialogOpen) { 
+        <ModalDialog
+                     Title="Are you sure?"
+                     Text="Do you want to generate reporting institutions based by adverse event?"
+                     OnClose="@OnReportDialogClose">
+        </ModalDialog>
+    }
 }
 
 @code {
@@ -68,15 +75,30 @@ else
     List<AdverseEvent> adverseEvents;
     List<ReportedInstitution> reportedInstitutions;
 
+    public bool ReportDialogOpen { get; set; }
+    public AdverseEvent AdverseEventToGenerate { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         adverseEvents = await Task.Run(() => AdverseEventRepository.GetAll());
         reportedInstitutions = await Task.Run(() => ReportedInstitutionRepository.GetAll());
     }
 
-    protected async void ReportAdverseEvent(AdverseEvent adverseEvent)
+    private async Task OnReportDialogClose(bool accepted)
     {
-        await Task.Run(() => ReportedInstitutionRepository.Create(adverseEvent));
+        if (accepted)
+        {
+            await Task.Run(() => ReportedInstitutionRepository.Create(AdverseEventToGenerate));
+            AdverseEventToGenerate = null;
+        }
+        ReportDialogOpen = false;
+        StateHasChanged();
+    }
+
+    private void OpenReportDialog(AdverseEvent adverseEvent)
+    {
+        AdverseEventToGenerate = adverseEvent;
+        ReportDialogOpen = true;
         StateHasChanged();
     }
 }
