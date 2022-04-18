@@ -82,11 +82,11 @@ else
     [Inject]
     NavigationManager NavigationManager { get; set; }
     [Inject]
-    NationalRequirementsRepository nationalRequirementsRepository { get; set; }
+    INationalRequirementsRepository nationalRequirementsRepository { get; set; }
     [Inject]
-    NationalRequirementVersionRepository nationalRequirementVersionRepository { get; set; }
+    INationalRequirementVersionRepository nationalRequirementVersionRepository { get; set; }
     [Inject]
-    CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
+    ICountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
 
     [Parameter]
     public string Country { get; set; }

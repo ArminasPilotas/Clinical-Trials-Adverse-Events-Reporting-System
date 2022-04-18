@@ -41,7 +41,7 @@
     [Inject]
     NavigationManager NavigationManager { get; set; }
     [Inject]
-    AdverseEventRepository AdverseEventRepository { get; set; }
+    IAdverseEventRepository AdverseEventRepository { get; set; }
     public List<InvestigationalProductType> investigationalProductTypes;
     private EditContext editContext;
 

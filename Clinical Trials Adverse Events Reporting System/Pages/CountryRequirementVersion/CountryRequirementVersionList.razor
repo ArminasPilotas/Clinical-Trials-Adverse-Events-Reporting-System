@@ -54,9 +54,9 @@ else
     public string Country { get; set; }
 
     [Inject]
-    CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
+    ICountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
     [Inject]
-    NationalRequirementVersionRepository NationalRequirementVersionRepository { get; set; }
+    INationalRequirementVersionRepository NationalRequirementVersionRepository { get; set; }
 
     List<CountryRequirementVersion> countryRequirementVersions;
     List<NationalRequirementVersion> nationalRequirementVersions;

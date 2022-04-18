@@ -60,11 +60,11 @@ else
         [Inject]
         NavigationManager NavigationManager { get; set; }
         [Inject]
-        InstitutionRepository institutionRepository { get; set; }
+        IInstitutionRepository institutionRepository { get; set; }
         [Inject]
         IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
         [Inject]
-        CountryRepository CountryRepository { get; set; }
+        ICountryRepository CountryRepository { get; set; }
         [Inject]
         IValidator<Institution> InstitutionValidator { get; set; }
 

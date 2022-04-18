@@ -38,13 +38,13 @@
     [Parameter]
     public string Country { get; set; }
     [Inject]
-    NationalRequirementsRepository nationalRequirementsRepository { get; set; }
+    INationalRequirementsRepository nationalRequirementsRepository { get; set; }
     [Inject]
-    NationalRequirementVersionRepository nationalRequirementVersionRepository { get; set; }
+    INationalRequirementVersionRepository nationalRequirementVersionRepository { get; set; }
     [Inject]
-    CountryRepository countryRepository { get; set; }
+    ICountryRepository countryRepository { get; set; }
     [Inject]
-    CountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
+    ICountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
     [Inject]
     IClassifierRepository<ReportingType> reportingTypeRepository { get; set; }
     [Inject]

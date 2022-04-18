@@ -1,10 +1,10 @@
 ﻿@page "/{Country}/Institution/Add"
 
 
-@inject InstitutionRepository institutionRepository
+@inject IInstitutionRepository institutionRepository
 @inject IClassifierRepository<InvestigationalProductType> investigationalProductTypeRepository
 @inject IClassifierRepository<InstitutionType> institutionTypeRepository
-@inject CountryRepository countryRepository
+@inject ICountryRepository countryRepository
 @inject NavigationManager NavigationManager
 
 @if (editContext != null)

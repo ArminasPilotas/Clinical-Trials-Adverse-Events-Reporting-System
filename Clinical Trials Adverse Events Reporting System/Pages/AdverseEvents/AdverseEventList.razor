@@ -40,7 +40,7 @@ else
                         <a class="nav-link" href="/AdverseEvent/Edit/@adverseEvent.Id">
                             <span class="oi oi-pencil" aria-hidden="true">Edit</span>
                         </a>
-                        <a class="nav-link" @onclick="() => OpenReportDialog(adverseEvent))">
+                        <a class="nav-link" @onclick="() => OpenReportDialog(adverseEvent)">
                             <span class="oi oi-bell" aria-hidden="true">Report</span>
                         </a>
                         }
@@ -66,9 +66,9 @@ else
 
 @code {
     [Inject]
-    AdverseEventRepository AdverseEventRepository { get; set; }
+    IAdverseEventRepository AdverseEventRepository { get; set; }
     [Inject]
-    ReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
+    IReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
     [Inject]
     NavigationManager NavigationManager { get; set; }
 

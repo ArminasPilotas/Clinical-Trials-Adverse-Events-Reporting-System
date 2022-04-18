@@ -79,7 +79,7 @@ else
     [Parameter]
     public string AdverseEventId { get; set; }
     [Inject]
-    ReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
+    IReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
     private List<int> CheckedValues { get; set; }
     private bool ParentCheckboxClick { get; set; }
     //private Mailer mailer;

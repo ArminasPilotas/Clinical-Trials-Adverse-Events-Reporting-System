@@ -32,7 +32,7 @@ else
     [Parameter]
     public string Id { get; set; }
     [Inject]
-    AuthorityRepository authorityRepository { get; set; }
+    IAuthorityRepository authorityRepository { get; set; }
     [Inject]
     NavigationManager NavigationManager { get; set; }
     [Inject]
@@ -40,7 +40,7 @@ else
     [Inject]
     IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
     [Inject]
-    InstitutionRepository institutionRepository { get; set; }
+    IInstitutionRepository institutionRepository { get; set; }
     [Inject]
     IValidator<Authority> authorityValidator { get; set; }
 

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 {
-    public class InstitutionRepository
+    public class InstitutionRepository : IInstitutionRepository
     {
         private readonly CTAERS _dbContext;
 

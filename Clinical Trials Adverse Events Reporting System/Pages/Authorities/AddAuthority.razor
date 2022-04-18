@@ -32,7 +32,7 @@
     [Inject]
     IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
     [Inject]
-    InstitutionRepository institutionRepository { get; set; }
+    IInstitutionRepository institutionRepository { get; set; }
     [Inject]
     IValidator<Authority> authorityValidator { get; set; }
 

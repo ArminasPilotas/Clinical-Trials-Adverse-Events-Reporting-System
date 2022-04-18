@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 {
-    public class CountryRepository
+    public class CountryRepository : ICountryRepository
     {
         private readonly CTAERS _dbContext;
 
