@@ -20,7 +20,8 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Validation
             bool condition = _dbContext.CountryRequirementVersions
                 .Where(c => c.InvestigationalProductType == countryRequirementVersion.InvestigationalProductType &&
                 c.ContactVersion == countryRequirementVersion.ContactVersion &&
-                c.RequirementVersion == countryRequirementVersion.RequirementVersion)
+                c.RequirementVersion == countryRequirementVersion.RequirementVersion &&
+                c.Id != countryRequirementVersion.Id)
                 .Any();
 
             return !condition;

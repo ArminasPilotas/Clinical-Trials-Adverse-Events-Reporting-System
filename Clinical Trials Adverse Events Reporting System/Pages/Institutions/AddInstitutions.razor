@@ -1,12 +1,5 @@
 ﻿@page "/{Country}/Institution/Add"
 
-
-@inject IInstitutionRepository institutionRepository
-@inject IClassifierRepository<InvestigationalProductType> investigationalProductTypeRepository
-@inject IClassifierRepository<InstitutionType> institutionTypeRepository
-@inject ICountryRepository countryRepository
-@inject NavigationManager NavigationManager
-
 @if (editContext != null)
 {
     <EditForm EditContext="@editContext" OnSubmit="@AddInstitution" @onreset="@Cancel">
@@ -39,9 +32,10 @@
 
         <CustomInputText @bind-Value="@institution.RegNo" Label="Registration Number"></CustomInputText>
 
-        <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
-
-        <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
+        <div id="container">
+            <button id="button1" class="btn btn-primary" type="submit">Create</button>
+            <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+        </div>
 
     </EditForm>
 }
@@ -49,6 +43,17 @@
 @code {
     [Parameter]
     public string Country { get; set; }
+
+    [Inject]
+    IInstitutionRepository institutionRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InvestigationalProductType> investigationalProductTypeRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
+    [Inject]
+    ICountryRepository countryRepository { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
 
     public Institution institution = new Institution();
     public List<InstitutionType> institutionTypes { get; set; }

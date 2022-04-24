@@ -35,19 +35,21 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
             services.AddServerSideBlazor();
             services.AddDbContext<Entities.CTAERS>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
             services.AddScoped(typeof(IClassifierRepository<>), typeof(ClassifierRepository<>));
-            services.AddScoped<CountryRepository>();
-            services.AddScoped<InstitutionRepository>();
-            services.AddScoped<NationalRequirementsRepository>();
-            services.AddScoped<AuthorityRepository>();
-            services.AddScoped<CountryRequirementVersionRepository>();
-            services.AddScoped<NationalRequirementVersionRepository>();
+            services.AddScoped<ICountryRepository,CountryRepository>();
+            services.AddScoped<IInstitutionRepository,InstitutionRepository>();
+            services.AddScoped<INationalRequirementsRepository,NationalRequirementsRepository>();
+            services.AddScoped<IAuthorityRepository,AuthorityRepository>();
+            services.AddScoped<ICountryRequirementVersionRepository,CountryRequirementVersionRepository>();
+            services.AddScoped<INationalRequirementVersionRepository,NationalRequirementVersionRepository>();
             services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
             services.AddScoped(typeof(IValidator<Authority>), typeof(AuthorityValidator));
             services.AddScoped(typeof(IValidator<Institution>), typeof(InstitutionValidator));
             services.AddScoped(typeof(IValidator<CountryRequirementVersion>), typeof(CountryRequirementVersionValidator));
             services.AddScoped(typeof(IValidator<>), typeof(ClassifierValidator<>));
-            services.AddScoped<AdverseEventRepository>();
-            services.AddScoped<ReportedInstitutionRepository>();
+            services.AddScoped(typeof(IValidator<AdverseEvent>), typeof(AdverseEventValidator));
+            services.AddScoped(typeof(IValidator<NationalRequirement>), typeof(NationalRequirementValidator));
+            services.AddScoped<IAdverseEventRepository,AdverseEventRepository>();
+            services.AddScoped<IReportedInstitutionRepository,ReportedInstitutionRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

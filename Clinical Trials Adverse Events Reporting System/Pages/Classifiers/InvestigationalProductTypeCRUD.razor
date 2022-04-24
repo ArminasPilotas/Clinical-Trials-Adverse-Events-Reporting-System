@@ -4,9 +4,9 @@
 @inject IClassifierRepository<InvestigationalProductType> classifierRepository
 @inject NavigationManager NavigationManager
 
-@if (Action != "Delete")
+@if (Action != "Delete" && editContext != null)
 {
-    <EditForm Model="@classifier" OnValidSubmit="@OnValidSubmit" @onreset="@Cancel">
+    <EditForm EditContext="@editContext" OnSubmit="@OnValidSubmit" @onreset="@Cancel">
 
         <DataAnnotationsValidator />
 
@@ -32,9 +32,13 @@
     public string Action { get; set; }
     [Parameter]
     public string Id { get; set; }
+    [Inject]
+    IValidator<InvestigationalProductType> ClassifierValidator { get; set; }
 
     InvestigationalProductType classifier = new InvestigationalProductType();
 
+    private CustomValidationBase customValidationBase;
+    private EditContext editContext;
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,21 +50,53 @@
         {
             DeleteClassifier();
         }
+        editContext = new EditContext(classifier);
     }
 
     protected async void UpdateClassifier()
     {
-        classifier.Modified = DateTime.UtcNow;
-        await classifierRepository.Update(classifier);
-        NavigationManager.NavigateTo("Classifiers/InvestigationalProductType/Index");
+        customValidationBase.ClearErrors();
+
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!ClassifierValidator.Validate(classifier))
+        {
+            errors.Add(nameof(classifier.Name),
+                new List<string>() { "Classifier name field must be unique" });
+        }
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
+        {
+            await classifierRepository.Update(classifier);
+            NavigationManager.NavigateTo("Classifiers/InvestigationalProductType/Index");
+        }
     }
 
     protected async void CreateClassifier()
     {
-        classifier.Created = DateTime.UtcNow;
-        classifier.Modified = DateTime.UtcNow;
-        await classifierRepository.Create(classifier);
-        NavigationManager.NavigateTo("Classifiers/InvestigationalProductType/Index");
+        customValidationBase.ClearErrors();
+
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!ClassifierValidator.Validate(classifier))
+        {
+            errors.Add(nameof(classifier.Name),
+                new List<string>() { "Classifier name field must be unique" });
+        }
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
+        {
+            await classifierRepository.Create(classifier);
+            NavigationManager.NavigateTo("Classifiers/InvestigationalProductType/Index");
+        }
     }
 
     protected async void DeleteClassifier()

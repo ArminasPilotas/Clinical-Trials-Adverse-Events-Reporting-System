@@ -1,8 +1,12 @@
 ﻿@page "/{Country}/NationalRequirements/Add"
 
-<EditForm Model="@nationalRequirement" OnValidSubmit="CreateNationalRequirement" @onreset="@Cancel">
+@if (editContext != null)
+{
+<EditForm EditContext="@editContext" OnSubmit="CreateNationalRequirement" @onreset="@Cancel">
+    <DataAnnotationsValidator />
 
-    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <ValidationSummary />
+    <CustomValidationBase @ref="customValidationBase" />
 
     <InputComponent inputName="@Country" labelName="Country" readOnly="true"></InputComponent>
 
@@ -27,13 +31,13 @@
 
     <CustomInputText @bind-Value="@nationalRequirement.Comments" Label="Comments"></CustomInputText>
 
-    <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
+    <div id="container">
+        <button id="button1" class="btn btn-primary" type="submit">Create</button>
+        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+    </div>
 
-    <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
-
-    <ValidationSummary></ValidationSummary>
 </EditForm>
-
+}
 @code {
     [Parameter]
     public string Country { get; set; }
@@ -59,6 +63,8 @@
     IClassifierRepository<ReportType> reportTypeRepository { get; set; }
     [Inject]
     NavigationManager NavigationManager { get; set; }
+    [Inject]
+    IValidator<NationalRequirement> NationalRequirementValidator { get; set; }
 
     List<ReportingType> reportingTypes;
     List<InstitutionType> institutionTypes;
@@ -68,6 +74,9 @@
     List<ReportType> reportTypes;
 
     NationalRequirement nationalRequirement = new NationalRequirement();
+
+    private CustomValidationBase customValidationBase;
+    private EditContext editContext;
 
     public int ReportingTypeId {
         get
@@ -145,14 +154,44 @@
         investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
         reportTypes = await Task.Run(() => reportTypeRepository.GetAll());
         nationalRequirement.Country = await countryRepository.GetByName(Country);
+        editContext = new EditContext(nationalRequirement);
     }
 
     protected async void CreateNationalRequirement()
     {
-        await nationalRequirementsRepository.Create(nationalRequirement);
-        await CreateNationalRequirementVersion();
+        customValidationBase.ClearErrors();
 
-        NavigationManager.NavigateTo($"{Country}/NationalRequirements/Index");
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!NationalRequirementValidator.Validate(nationalRequirement))
+        {
+            errors.Add(nameof(nationalRequirement.InstitutionType),
+                new List<string>() {"Institution type field must be unique" });
+
+            errors.Add(nameof(nationalRequirement.InvestigationalProductType),
+                new List<string>() {"Investigational Product Type field must be unique" });
+
+            errors.Add(nameof(nationalRequirement.ReportingType),
+                new List<string>() {"Reporting type field must be unique" });
+
+            errors.Add(nameof(nationalRequirement.ReportType),
+                new List<string>() { "Report type field must be unique" });
+
+            errors.Add(nameof(nationalRequirement.CaseOrigin),
+                new List<string>() { "Case origin field must be unique" });
+        }
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
+        {
+            await nationalRequirementsRepository.Create(nationalRequirement);
+            await CreateNationalRequirementVersion();
+
+            NavigationManager.NavigateTo($"{Country}/NationalRequirements/Index");
+        }
     }
 
     protected async Task CreateNationalRequirementVersion()

@@ -1,10 +1,5 @@
 ﻿@page "/{Country}/Institution/Delete/{Id}"
 
-
-@inject IInstitutionRepository institutionRepository
-@inject NavigationManager NavigationManager
-
-
 @if (institution is null)
 {
     <p><em>Loading...</em></p>
@@ -12,39 +7,38 @@
 
 else
 {
-    <form>
+<EditForm Model="@institution" OnSubmit="@DeleteInstitutions" @onreset="@Cancel">
 
-        <InputComponent @bind-inputName="@institution.Name" labelName="Institution Name" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.Name" labelName="Institution Name" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.InstitutionType.Name" labelName="Institution Type" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.InstitutionType.Name" labelName="Institution Type" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.Address" labelName="Address" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.Address" labelName="Address" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.Phone" labelName="Phone" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.Phone" labelName="Phone" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.Fax" labelName="Fax" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.Fax" labelName="Fax" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.Email" labelName="Email" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.Email" labelName="Email" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.AlternateAddress" labelName="Alternate Address" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.AlternateAddress" labelName="Alternate Address" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.AlternatePhone" labelName="Alternate Phone" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.AlternatePhone" labelName="Alternate Phone" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.AlternateFax" labelName="Alternate Fax" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.AlternateFax" labelName="Alternate Fax" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.AlternateEmail" labelName="Alternate Email" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.AlternateEmail" labelName="Alternate Email" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.City" labelName="City" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.City" labelName="City" readOnly="true"></InputComponent>
 
-        <InputComponent @bind-inputName="@institution.RegNo" labelName="Registration Number" readOnly="true"></InputComponent>
+    <InputComponent @bind-inputName="@institution.RegNo" labelName="Registration Number" readOnly="true"></InputComponent>
 
-        <ButtonComponent buttonText="Delete" buttonType="button" buttonStyle="primary" onButtonClick="@(() => DeleteInstitutions())"></ButtonComponent>
-
-        <ButtonComponent buttonText="Cancel" buttonType="button" buttonStyle="danger" onButtonClick="@Cancel"></ButtonComponent>
-        
-    </form>
-
-    }
+    <div id="container">
+        <button id="button1" class="btn btn-primary" type="submit">Delete</button>
+        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+    </div>
+</EditForm>
+}
 
 
 @code {
@@ -52,6 +46,11 @@ else
     public string Country { get; set; }
     [Parameter]
     public string Id { get; set; }
+
+    [Inject]
+    IInstitutionRepository institutionRepository { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
 
     public Institution institution { get; set; }
 

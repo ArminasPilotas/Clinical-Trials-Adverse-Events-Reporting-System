@@ -17,7 +17,8 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Validation
         public bool Validate(Institution institution)
         {
             bool condition = _dbContext.Institutions
-                .Where(c => c.Name == institution.Name)
+                .Where(c => c.Name == institution.Name &&
+                c.Id != institution.Id)
                 .Any();
 
             return !condition;

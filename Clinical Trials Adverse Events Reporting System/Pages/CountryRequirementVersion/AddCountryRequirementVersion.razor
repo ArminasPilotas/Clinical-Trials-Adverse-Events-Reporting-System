@@ -1,9 +1,13 @@
 ﻿@page "/{Country}/CountryRequirementsVersion/Add"
 
+@if (editContext != null)
+{
+<EditForm EditContext="@editContext" OnSubmit="@CreateCountryRequirementVersion" @onreset="@Cancel">
 
-<EditForm Model="@countryRequirementVersion" OnValidSubmit="@CreateCountryRequirementVersion" @onreset="@Cancel">
+    <DataAnnotationsValidator />
 
-    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <ValidationSummary />
+    <CustomValidationBase @ref="customValidationBase" />
 
     <InputComponent @bind-inputName="@Country" labelName="Country" readOnly="true"></InputComponent>
 
@@ -14,7 +18,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Date Of Renewal</label>
         <div class="col-sm-10">
-            <SfDatePicker TValue="DateTime" @bind-Value="@countryRequirementVersion.DateOfRenewal" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false" >
+            <SfDatePicker TValue="DateTime" @bind-Value="@countryRequirementVersion.DateOfRenewal" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false">
                 <DatePickerEvents TValue="DateTime" ValueChange="@RenewalValueChanged"></DatePickerEvents>
             </SfDatePicker>
         </div>
@@ -31,28 +35,32 @@
         </div>
     </div>
 
-    <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
+    <div id="container">
+        <button id="button1" class="btn btn-primary" type="submit">Create</button>
+        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+    </div>
 
-    <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
-
-    <ValidationSummary></ValidationSummary>
 </EditForm>
+}
 
 @code {
-        [Parameter]
-        public string Country { get; set; }
-        [Inject]
-        ICountryRepository countryRepository { get; set; }
-        [Inject]
-        IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
-        [Inject]
-        ICountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
-        [Inject]
-        NavigationManager NavigationManager { get; set; }
-        [Inject]
-        IValidator<CountryRequirementVersion> CountryRequirementVersionValidator { get; set; }
+    [Parameter]
+    public string Country { get; set; }
+    [Inject]
+    ICountryRepository countryRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
+    [Inject]
+    ICountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    [Inject]
+    IValidator<CountryRequirementVersion> CountryRequirementVersionValidator { get; set; }
 
-        List<InvestigationalProductType> investigationalProductTypes;
+    private CustomValidationBase customValidationBase;
+    private EditContext editContext;
+
+    List<InvestigationalProductType> investigationalProductTypes;
 
     public CountryRequirementVersion countryRequirementVersion = new CountryRequirementVersion();
 
@@ -74,11 +82,32 @@
         countryRequirementVersion.Country = await countryRepository.GetByName(Country);
         countryRequirementVersion.DateOfRenewal = DateTime.Now;
         countryRequirementVersion.ContactRevisionDate = DateTime.Now;
+        editContext = new EditContext(countryRequirementVersion);
     }
 
     protected async void CreateCountryRequirementVersion()
     {
-        if (CountryRequirementVersionValidator.Validate(countryRequirementVersion))
+        customValidationBase.ClearErrors();
+
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!CountryRequirementVersionValidator.Validate(countryRequirementVersion))
+        {
+            errors.Add(nameof(countryRequirementVersion.InvestigationalProductType),
+                new List<string>() { "Investigational Product Type field must be unique" });
+
+            errors.Add(nameof(countryRequirementVersion.ContactVersion),
+                new List<string>() { "Contact version field must be unique" });
+
+            errors.Add(nameof(countryRequirementVersion.RequirementVersion),
+                new List<string>() { "Requirement version field must be unique" });
+        }
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
         {
             await countryRequirementVersionRepository.Create(countryRequirementVersion);
             NavigationManager.NavigateTo($"{Country}/CountryRequirementsVersion/Index");

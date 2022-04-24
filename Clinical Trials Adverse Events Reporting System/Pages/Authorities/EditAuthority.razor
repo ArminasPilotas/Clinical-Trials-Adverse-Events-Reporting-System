@@ -1,14 +1,13 @@
 ﻿@page "/{Country}/Authority/Edit/{Id}"
 
 
-@if (authority is null)
+@if (editContext != null)
 {
-    <p><em>Loading...</em></p>
-}
-else
-{
-<EditForm Model="@authority" OnValidSubmit="@UpdateAuthority" @onreset="@Cancel">
+<EditForm EditContext="@editContext" OnSubmit="@UpdateAuthority" @onreset="@Cancel">
     <DataAnnotationsValidator />
+
+    <ValidationSummary />
+    <CustomValidationBase @ref="customValidationBase" />
 
     <CustomInputSelect @bind-value="@InstitutionId" labelName="Institution Name" items="@institutions"></CustomInputSelect>
 
@@ -16,17 +15,15 @@ else
 
     <CustomInputSelect @bind-value="@InstitutionTypeId" labelName="Institution Type" items="@institutionTypes"></CustomInputSelect>
 
-    <ButtonComponent buttonText="Create" buttonType="sumbmit" buttonStyle="primary"></ButtonComponent>
-
-    <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
-
-    <ValidationSummary></ValidationSummary>
+    <div id="container">
+        <button id="button1" class="btn btn-primary" type="submit">Update</button>
+        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+    </div>
 
 </EditForm>
-    }
+}
 
 @code {
-    //TODO ADD VALIDATION ON INSTITUTION THAT IPTYPE AND INSTITUTIONTYPE CAN'T BE THE SAME
     [Parameter]
     public string Country { get; set; }
     [Parameter]
@@ -42,7 +39,11 @@ else
     [Inject]
     IInstitutionRepository institutionRepository { get; set; }
     [Inject]
-    IValidator<Authority> authorityValidator { get; set; }
+    IValidator<Authority> AuthorityValidator { get; set; }
+
+    private CustomValidationBase customValidationBase;
+    private EditContext editContext;
+
 
     public List<Institution> institutions { get; set; }
     public List<InvestigationalProductType> investigationalProductTypes { get; set; }
@@ -93,11 +94,32 @@ else
         institutions = await Task.Run(() => institutionRepository.GetByCountry(Country));
         investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
         institutionTypes = await Task.Run(() => institutionTypeRepository.GetAll());
+        editContext = new EditContext(authority);
     }
 
-    protected async void UpdateAuthority() //TODO END THIS METHOD
+    protected async void UpdateAuthority()
     {
-        if (authorityValidator.Validate(authority))
+        customValidationBase.ClearErrors();
+
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!AuthorityValidator.Validate(authority))
+        {
+            errors.Add(nameof(authority.Institution),
+                new List<string>() { "Institution field must be unique" });
+
+            errors.Add(nameof(authority.InstitutionType),
+               new List<string>() { "Institution type field must be unique" });
+
+            errors.Add(nameof(authority.InvestigationalProductType),
+               new List<string>() { "Investigational product type field must be unique" });
+        }
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
         {
             await authorityRepository.Update(authority);
             NavigationManager.NavigateTo($"/{Country}/Authorities/Index");

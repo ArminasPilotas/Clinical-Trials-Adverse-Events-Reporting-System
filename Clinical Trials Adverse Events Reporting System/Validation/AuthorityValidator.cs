@@ -20,7 +20,8 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Validation
             bool condition = _dbContext.Authorities
                 .Where(c => c.Institution == authority.Institution &&
                 c.InstitutionType == authority.InstitutionType &&
-                c.InvestigationalProductType == authority.InvestigationalProductType)
+                c.InvestigationalProductType == authority.InvestigationalProductType &&
+                c.Id != authority.Id)
                 .Any();
 
             return !condition;

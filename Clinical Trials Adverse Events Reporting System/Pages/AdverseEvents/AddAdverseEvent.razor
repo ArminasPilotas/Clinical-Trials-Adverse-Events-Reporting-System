@@ -4,7 +4,9 @@
 {
 <EditForm EditContext="@editContext" OnSubmit="@CreateAdverseEvent" @onreset="@Cancel">
     <DataAnnotationsValidator />
+
     <ValidationSummary />
+    <CustomValidationBase @ref="customValidationBase" />
 
     <CustomInputSelect @bind-value="@IPTypeId" labelName="Investigational Product Type" items="@investigationalProductTypes"></CustomInputSelect>
 
@@ -28,9 +30,10 @@
         </div>
     </div>
 
-    <ButtonComponent buttonText="Create" buttonType="submit" buttonStyle="primary"></ButtonComponent>
-
-    <ButtonComponent buttonText="Cancel" buttonType="reset" buttonStyle="danger"></ButtonComponent>
+    <div id="container">
+        <button id="button1" class="btn btn-primary" type="submit">Create</button>
+        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+    </div>
 
 </EditForm>
 }
@@ -42,7 +45,11 @@
     NavigationManager NavigationManager { get; set; }
     [Inject]
     IAdverseEventRepository AdverseEventRepository { get; set; }
+    [Inject]
+    IValidator<AdverseEvent> AdverseEventValidator { get; set; }
+
     public List<InvestigationalProductType> investigationalProductTypes;
+    private CustomValidationBase customValidationBase;
     private EditContext editContext;
 
     public int IPTypeId
@@ -73,8 +80,31 @@
 
     protected async void CreateAdverseEvent()
     {
-        await AdverseEventRepository.Create(adverseEvent);
-        NavigationManager.NavigateTo("/AdverseEvents/Index");
+        customValidationBase.ClearErrors();
+
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!AdverseEventValidator.Validate(adverseEvent))
+        {
+            errors.Add(nameof(adverseEvent.StudyNo),
+                new List<string>() { "Study number field must be unique" });
+
+            errors.Add(nameof(adverseEvent.OccurredOn),
+                new List<string>() { "Occurred on date must be unique" });
+
+            errors.Add(nameof(adverseEvent.InvestigationalProductType),
+                new List<string>() { "Investigational product type field must be unique" });
+        }
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
+        {
+            await AdverseEventRepository.Create(adverseEvent);
+            NavigationManager.NavigateTo("/AdverseEvents/Index");
+        }
     }
 
     private void Cancel()

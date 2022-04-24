@@ -19,6 +19,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Create(TEntity entity)
         {
+            entity.Created = DateTime.UtcNow;
             await _dbContext.Set<TEntity>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
         }
@@ -31,7 +32,6 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task<List<TEntity>> GetAll()
         {
-            // return await _dbContext.Set<TEntity>().AsNoTracking().ToListAsync();
             return await _dbContext.Set<TEntity>().ToListAsync();
         }
 
@@ -42,6 +42,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 
         public async Task Update(TEntity entity)
         {
+            entity.Modified = DateTime.UtcNow;
             _dbContext.Set<TEntity>().Update(entity);
             await _dbContext.SaveChangesAsync();
         }

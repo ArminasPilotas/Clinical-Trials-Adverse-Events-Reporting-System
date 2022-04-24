@@ -4,26 +4,29 @@
 @inject IClassifierRepository<ReportType> classifierRepository
 @inject NavigationManager NavigationManager
 
-@if (Action != "Delete")
+@if (Action != "Delete" && editContext != null)
 {
-    <EditForm Model="@classifier" OnValidSubmit="@OnValidSubmit" @onreset="@Cancel">
+<EditForm EditContext="@editContext" OnSubmit="@OnValidSubmit" @onreset="@Cancel">
 
-        <DataAnnotationsValidator />
+    <DataAnnotationsValidator />
 
-        <CustomInputText @bind-Value="@classifier.Name" Label="Name"></CustomInputText>
+    <ValidationSummary />
+    <CustomValidationBase @ref="customValidationBase" />
 
-        @if (Action == "Edit")
-        {
-            <CustomInputText @bind-Value="@classifier.ModifyReason" Label="Modify Reason"></CustomInputText>
-            <ButtonComponent buttonStyle="primary" buttonText="Update" buttonType="submit"></ButtonComponent>
-        }
-        @if (Action == "Create")
-        {
-            <ButtonComponent buttonStyle="primary" buttonText="Create" buttonType="submit"></ButtonComponent>
-        }
-        <ButtonComponent buttonStyle="danger" buttonText="Cancel" buttonType="reset"></ButtonComponent>
+    <CustomInputText @bind-Value="@classifier.Name" Label="Name"></CustomInputText>
 
-    </EditForm>
+    @if (Action == "Edit")
+    {
+        <CustomInputText @bind-Value="@classifier.ModifyReason" Label="Modify Reason"></CustomInputText>
+        <ButtonComponent buttonStyle="primary" buttonText="Update" buttonType="submit"></ButtonComponent>
+    }
+    @if (Action == "Create")
+    {
+        <ButtonComponent buttonStyle="primary" buttonText="Create" buttonType="submit"></ButtonComponent>
+    }
+    <ButtonComponent buttonStyle="danger" buttonText="Cancel" buttonType="reset"></ButtonComponent>
+
+</EditForm>
 }
 
 
@@ -33,9 +36,13 @@
     public string Action { get; set; }
     [Parameter]
     public string Id { get; set; }
+    [Inject]
+    IValidator<ReportType> ClassifierValidator { get; set; }
 
     ReportType classifier = new ReportType();
 
+    private CustomValidationBase customValidationBase;
+    private EditContext editContext;
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,21 +54,53 @@
         {
             DeleteClassifier();
         }
+        editContext = new EditContext(classifier);
     }
 
     protected async void UpdateClassifier()
     {
-        classifier.Modified = DateTime.UtcNow;
-        await classifierRepository.Update(classifier);
-        NavigationManager.NavigateTo("Classifiers/ReportType/Index");
+        customValidationBase.ClearErrors();
+
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!ClassifierValidator.Validate(classifier))
+        {
+            errors.Add(nameof(classifier.Name),
+                new List<string>() { "Classifier name field must be unique" });
+        }
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
+        {
+            await classifierRepository.Update(classifier);
+            NavigationManager.NavigateTo("Classifiers/ReportType/Index");
+        }
     }
 
     protected async void CreateClassifier()
     {
-        classifier.Created = DateTime.UtcNow;
-        classifier.Modified = DateTime.UtcNow;
-        await classifierRepository.Create(classifier);
-        NavigationManager.NavigateTo("Classifiers/ReportType/Index");
+        customValidationBase.ClearErrors();
+
+        var errors = new Dictionary<string, List<string>>();
+
+        if (!ClassifierValidator.Validate(classifier))
+        {
+            errors.Add(nameof(classifier.Name),
+                new List<string>() { "Classifier name field must be unique" });
+        }
+        if (errors.Any() || !editContext.Validate())
+        {
+            customValidationBase.DisplayErrors(errors);
+            StateHasChanged();
+        }
+        else
+        {
+            await classifierRepository.Create(classifier);
+            NavigationManager.NavigateTo("Classifiers/ReportType/Index");
+        }
     }
 
     protected async void DeleteClassifier()

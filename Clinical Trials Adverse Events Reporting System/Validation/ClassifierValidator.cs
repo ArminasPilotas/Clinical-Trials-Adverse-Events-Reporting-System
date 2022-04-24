@@ -17,7 +17,10 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Validation
         }
         public bool Validate(TEntity entity)
         {
-            return !_dbContext.Set<TEntity>().Where(c => c.Name == entity.Name).Any();
+            return !_dbContext.Set<TEntity>()
+                .Where(c => c.Name == entity.Name &&
+                c.Id != entity.Id)
+                .Any();
         }
     }
 }
