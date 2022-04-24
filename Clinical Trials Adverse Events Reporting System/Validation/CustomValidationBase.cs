@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Validation
 {
+    /// <summary>
+    /// Class is used in razor components create, edit forms to show added errors to the message store
+    /// </summary>
     public class CustomValidationBase : ComponentBase
     {
         private ValidationMessageStore messageStore;

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Utilities
 {
+    /// <summary>
+    /// Data attribute class helps to validate user picked data
+    /// </summary>
     public class DateAttribute : RangeAttribute
     {
         public DateAttribute()

@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 {
+    /// <summary>
+    /// Reported institution repository is the main logic for access data from the database
+    /// </summary>
     public class ReportedInstitutionRepository : IReportedInstitutionRepository
     {
         public readonly CTAERS _dbContext;
@@ -16,6 +19,12 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
             _dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Creates reported institutions and adds to the database based by adverse event. Firstly institutions is picked where study number is equals with adverse event study number and registration number is not empty
+        /// Then first national requirement is picked based by reported institutions type, country and investigational product type. If national requiremnt is found we add reported institution to the database
+        /// </summary>
+        /// <param name="adverseEvent"></param>
+        /// <returns></returns>
         public async Task Create (AdverseEvent adverseEvent)
         {
             List<Institution> institutions = new List<Institution>();
@@ -54,13 +63,21 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
             await _dbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Method helps to get all reported institutions from the database
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<ReportedInstitution>> GetAll()
         {
             return await _dbContext.ReportedInstitutions
                 .Include(c => c.AdverseEvent)
                 .ToListAsync();
         }
-
+        /// <summary>
+        /// Method helps to get reported institutions based by adverse event Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<List<ReportedInstitution>> GetByAdverseEvent(int id)
         {
             return await _dbContext.ReportedInstitutions
@@ -70,6 +87,11 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Method updates reported institution object in the database
+        /// </summary>
+        /// <param name="reportedInstitution"></param>
+        /// <returns></returns>
         public async Task Update(ReportedInstitution reportedInstitution)
         {
             reportedInstitution.ReportedOn = DateTime.UtcNow;
