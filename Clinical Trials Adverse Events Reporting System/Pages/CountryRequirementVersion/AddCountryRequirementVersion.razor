@@ -62,7 +62,7 @@
 
     List<InvestigationalProductType> investigationalProductTypes;
 
-    public CountryRequirementVersion countryRequirementVersion = new CountryRequirementVersion();
+    public CountryRequirementVersion countryRequirementVersion;
 
     public int IPTypeId {
         get
@@ -79,9 +79,8 @@
     protected override async Task OnInitializedAsync()
     {
         investigationalProductTypes = await Task.Run(() => IPTypeRepository.GetAll());
+        countryRequirementVersion = new CountryRequirementVersion();
         countryRequirementVersion.Country = await countryRepository.GetByName(Country);
-        countryRequirementVersion.DateOfRenewal = DateTime.Now;
-        countryRequirementVersion.ContactRevisionDate = DateTime.Now;
         editContext = new EditContext(countryRequirementVersion);
     }
 
