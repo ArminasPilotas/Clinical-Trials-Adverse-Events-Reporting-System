@@ -40,6 +40,12 @@ else
             <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
         </div>
     </EditForm>
+
+    @if (showErrorDialog)
+    {
+        <ErrorMessage Text="Institution is in use" Title="Error message" OnClose="@OnErrorDialogClose"></ErrorMessage>
+    }
+
 }
 
 
@@ -55,6 +61,7 @@ else
     NavigationManager NavigationManager { get; set; }
 
     public Institution institution { get; set; }
+    private bool showErrorDialog;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,12 +70,31 @@ else
 
     protected async Task DeleteInstitutions()
     {
-        await institutionRepository.Delete(institution);
-        NavigationManager.NavigateTo($"{Country}/Institution/Index");
+        try
+        {
+            await institutionRepository.Delete(institution);
+            NavigationManager.NavigateTo($"{Country}/Institution/Index");
+        }
+        catch
+        {
+            showErrorDialog = true;
+            StateHasChanged();
+        }
     }
 
     private void Cancel()
     {
         NavigationManager.NavigateTo($"{Country}/Institution/Index");
     }
+
+    private void OnErrorDialogClose(bool accepted)
+    {
+        if (accepted)
+        {
+            NavigationManager.NavigateTo($"{Country}/Institution/Index");
+        }
+        showErrorDialog = false;
+        StateHasChanged();
+    }
+
 }

@@ -1,7 +1,9 @@
 ﻿@page "/AdverseEvents/Index"
 @using System.IO;
-@using System.Net; 
- 
+@using System.Net;
+
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "CRO")]
+
 <NavLink>
     <a href="/AdverseEvent/Add">
         <span class="oi oi-plus" aria-hidden="true">Create Adverse Event</span>
@@ -9,26 +11,26 @@
 </NavLink>
 @if (adverseEvents is null)
 {
-                <p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Investigational Product Type</th>
-            <th scope="col">Study Number</th>
-            <th scope="col">Occurred On</th>
-            <th scope="col">Document</th>
-            <th scope="col">Description</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Investigational Product Type</th>
+                <th scope="col">Study Number</th>
+                <th scope="col">Occurred On</th>
+                <th scope="col">Document</th>
+                <th scope="col">Description</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
 
-    <tbody>
-         @foreach (var adverseEvent in adverseEvents)
-         {
+        <tbody>
+            @foreach (var adverseEvent in adverseEvents)
+            {
                 <tr>
                     <td>@adverseEvent.Id</td>
                     <td>@adverseEvent.InvestigationalProductType.Name</td>
@@ -40,33 +42,33 @@ else
                     }
                     else
                     {
-                       <td>@adverseEvent.AttachmentURL</td>
+                        <td>@adverseEvent.AttachmentURL</td>
                     }
                     <td>@adverseEvent.Description</td>
                     <td>
                         @if (!reportedInstitutions.Where(c => c.AdverseEvent == adverseEvent).Any())
                         {
-                        <a class="nav-link" href="/AdverseEvent/Edit/@adverseEvent.Id">
-                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
-                        </a>
-                        <a class="nav-link" @onclick="() => OpenReportDialog(adverseEvent)">
-                            <span class="oi oi-bell" aria-hidden="true">Report</span>
-                        </a>
+                            <a class="nav-link" href="/AdverseEvent/Edit/@adverseEvent.Id">
+                                <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                            </a>
+                            <a class="nav-link" @onclick="() => OpenReportDialog(adverseEvent)">
+                                <span class="oi oi-bell" aria-hidden="true">Report</span>
+                            </a>
                         }
-                    else
-                    {
-                        <a class="nav-link" href="/AdverseEvent/@adverseEvent.Id/ReportedInstitutions">
-                            <span class="oi oi-book" aria-hidden="true">Reported Institutions</span>
-                        </a>
-                    }
+                        else
+                        {
+                            <a class="nav-link" href="/AdverseEvent/@adverseEvent.Id/ReportedInstitutions">
+                                <span class="oi oi-book" aria-hidden="true">Reported Institutions</span>
+                            </a>
+                        }
                     </td>
                 </tr>
-         }
-    </tbody>
-</table>
-    @if (ReportDialogOpen) { 
-        <ModalDialog
-                     Title="Are you sure?"
+            }
+        </tbody>
+    </table>
+    @if (ReportDialogOpen)
+    {
+        <ModalDialog Title="Are you sure?"
                      Text="Do you want to generate reporting institutions based by adverse event?"
                      OnClose="@OnReportDialogClose">
         </ModalDialog>

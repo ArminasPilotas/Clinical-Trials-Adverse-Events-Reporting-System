@@ -6,6 +6,11 @@
 @inject IClassifierRepository<InvestigationalProductType> classifierRepository
 @inject NavigationManager NavigationManager
 
+@if (showErrorDialog)
+{
+    <ErrorMessage Text="Classifier is in use" Title="Error message" OnClose="@OnErrorDialogClose"></ErrorMessage>
+}
+
 @if (Action != "Delete" && editContext != null)
 {
     <EditForm EditContext="@editContext" OnSubmit="@OnValidSubmit" @onreset="@Cancel">
@@ -42,6 +47,7 @@
 
     private CustomValidationBase customValidationBase;
     private EditContext editContext;
+    private bool showErrorDialog;
 
     protected override async Task OnInitializedAsync()
     {
@@ -104,8 +110,16 @@
 
     protected async void DeleteClassifier()
     {
-        await classifierRepository.Delete(classifier);
-        NavigationManager.NavigateTo("Classifiers/InvestigationalProductType/Index");
+        try
+        {
+            await classifierRepository.Delete(classifier);
+            NavigationManager.NavigateTo("Classifiers/InvestigationalProductType/Index");
+        }
+        catch
+        {
+            showErrorDialog = true;
+            StateHasChanged();
+        }
     }
 
 
@@ -118,6 +132,16 @@
     {
         if (Action == "Create") CreateClassifier();
         if (Action == "Edit") UpdateClassifier();
+    }
+
+    private void OnErrorDialogClose(bool accepted)
+    {
+        if (accepted)
+        {
+            NavigationManager.NavigateTo("Classifiers/InvestigationalProductType/Index");
+        }
+        showErrorDialog = false;
+        StateHasChanged();
     }
 
 }

@@ -1,5 +1,7 @@
 ﻿@page "/AdverseEvent/{AdverseEventId}/ReportedInstitutions"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "CRO")]
+
 @if (reportedInstitutions is null)
 {
     <p><em>Loading...</em></p>
@@ -58,23 +60,22 @@ else
 
     @if (ForceReportDialogOpen)
     {
-    <ModalDialog
-                 Title="Are you sure?"
-                 Text="Do you want force report adverse event to institutions?"
-                 OnClose="@OnForceReportDialogClose">
-        
-    </ModalDialog>
-     }
-    @if (ReportByEmailDialogOpen) { 
-        <ModalDialog
-                     Title="Are you sure?"
+        <ModalDialog Title="Are you sure?"
+                     Text="Do you want force report adverse event to institutions?"
+                     OnClose="@OnForceReportDialogClose">
+
+        </ModalDialog>
+    }
+    @if (ReportByEmailDialogOpen)
+    {
+        <ModalDialog Title="Are you sure?"
                      Text="Do you want report adverse event by email to institutions?"
                      OnClose="@OnReportByEmailDialogClose">
         </ModalDialog>
-         }
-
-
     }
+
+
+}
 @code {
     [Parameter]
     public string AdverseEventId { get; set; }

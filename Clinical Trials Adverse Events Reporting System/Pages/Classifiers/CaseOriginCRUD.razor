@@ -8,6 +8,10 @@
 @attribute [Authorize(Policy = "SystemAuthorization", Roles = "Administrator")]
 
 
+@if (showErrorDialog)
+{
+    <ErrorMessage Text="Classifier is in use" Title="Error message" OnClose="@OnErrorDialogClose"></ErrorMessage>
+}
 
 @if (Action != "Delete" && editContext != null)
 {
@@ -44,6 +48,7 @@
     public string Id { get; set; }
     [Inject]
     IValidator<CaseOrigin> ClassifierValidator { get; set; }
+    private bool showErrorDialog;
 
     CaseOrigin classifier = new CaseOrigin();
 
@@ -111,8 +116,16 @@
 
     protected async void DeleteClassifier()
     {
-        await classifierRepository.Delete(classifier);
-        NavigationManager.NavigateTo("Classifiers/CaseOrigin/Index");
+        try
+        {
+            await classifierRepository.Delete(classifier);
+            NavigationManager.NavigateTo("Classifiers/CaseOrigin/Index");
+        }
+        catch
+        {
+            showErrorDialog = true;
+            StateHasChanged();
+        }
     }
 
 
@@ -125,6 +138,16 @@
     {
         if (Action == "Create") CreateClassifier();
         if (Action == "Edit") UpdateClassifier();
+    }
+
+    private void OnErrorDialogClose(bool accepted)
+    {
+        if (accepted)
+        {
+            NavigationManager.NavigateTo("Classifiers/CaseOrigin/Index");
+        }
+        showErrorDialog = false;
+        StateHasChanged();
     }
 }
 

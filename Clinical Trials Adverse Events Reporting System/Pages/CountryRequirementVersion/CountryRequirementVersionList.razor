@@ -48,6 +48,12 @@ else
             }
         </tbody>
     </table>
+
+    @if (showErrorDialog)
+    {
+        <ErrorMessage Text="Country requirement version is in use" Title="Error message" OnClose="@OnErrorDialogClose"></ErrorMessage>
+    }
+
 }
 
 @code {
@@ -62,6 +68,8 @@ else
     List<CountryRequirementVersion> countryRequirementVersions;
     List<NationalRequirementVersion> nationalRequirementVersions;
 
+    private bool showErrorDialog;
+
     protected override async Task OnInitializedAsync()
     {
         countryRequirementVersions = await Task.Run(() => countryRequirementVersionRepository.GetByCountry(Country));
@@ -70,8 +78,22 @@ else
 
     private async void DeleteCountryRequirementVersion(CountryRequirementVersion countryRequirementVersion)
     {
-        await countryRequirementVersionRepository.Delete(countryRequirementVersion);
-        countryRequirementVersions.Remove(countryRequirementVersion);
+        try
+        {
+            await countryRequirementVersionRepository.Delete(countryRequirementVersion);
+            countryRequirementVersions.Remove(countryRequirementVersion);
+            StateHasChanged();
+        }
+        catch
+        {
+            showErrorDialog = true;
+            StateHasChanged();
+        }
+    }
+
+    private void OnErrorDialogClose(bool accepted)
+    {
+        showErrorDialog = false;
         StateHasChanged();
     }
 
