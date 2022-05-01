@@ -1,7 +1,48 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<h2>Most recent adverse events</h2>
+@if (adverseEvents is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="list-group">
+        @foreach(var adverseEvent in adverseEvents)
+        {
+            var adverseEventInstitutionsCount = reportedInstitutions.Where(c => c.AdverseEvent.Id == adverseEvent.Id).Count();
+            <a href="/AdverseEvents/Index" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1"></h5>
+                    <small>@CalculateDays(adverseEvent.OccurredOn).ToString() days ago</small>
+                </div>
+                <p class="mb-1">@adverseEvent.Description</p>
+                <small>Reported Institutions: @adverseEventInstitutionsCount</small>            
+            </a>
+        }
+    </div>
+}
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    [Inject]
+    IAdverseEventRepository AdverseEventRepository { get; set; }
+    [Inject]
+    IReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
+
+    List<AdverseEvent> adverseEvents;
+    List<ReportedInstitution> reportedInstitutions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        adverseEvents = await Task.Run(() => AdverseEventRepository.GetAll());
+        adverseEvents.OrderBy(c => c.OccurredOn);
+        reportedInstitutions = await Task.Run(() => ReportedInstitutionRepository.GetAll());
+    }
+    private int CalculateDays(DateTime date)
+    {
+        var days = (DateTime.UtcNow - date).TotalDays;
+        return Convert.ToInt32(days);
+    }
+}
+
