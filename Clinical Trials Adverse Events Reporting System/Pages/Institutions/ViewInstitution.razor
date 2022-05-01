@@ -1,5 +1,7 @@
 ﻿@page "/{Country}/Institution/View/{Id}"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "ContactManager")]
+
 @if (institution is null)
 {
     <p><em>Loading...</em></p>

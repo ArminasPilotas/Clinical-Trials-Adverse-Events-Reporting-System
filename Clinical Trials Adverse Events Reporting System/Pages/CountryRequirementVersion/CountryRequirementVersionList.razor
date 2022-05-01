@@ -1,5 +1,6 @@
 ﻿@page "/{Country}/CountryRequirementsVersion/Index"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Reporter")]
 
 <NavLink class="nav-link">
     <a href="/@Country/CountryRequirementsVersion/Add">

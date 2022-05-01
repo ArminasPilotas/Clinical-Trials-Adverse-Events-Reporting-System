@@ -1,5 +1,7 @@
 ﻿@page "/Classifiers/CaseOrigin/Index"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Administrator")]
+
 @inject IClassifierRepository<CaseOrigin> classifierRepository
 
 <ClassifierTable Classifiers="@classifiers" ClassifierName="CaseOrigin"></ClassifierTable>

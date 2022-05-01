@@ -1,5 +1,7 @@
 ﻿@page "/Classifiers/InvestigationalProductType/Index"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Administrator")]
+
 @inject IClassifierRepository<InvestigationalProductType> classifierRepository
 
 <ClassifierTable Classifiers="@classifiers" ClassifierName="InvestigationalProductType"></ClassifierTable>

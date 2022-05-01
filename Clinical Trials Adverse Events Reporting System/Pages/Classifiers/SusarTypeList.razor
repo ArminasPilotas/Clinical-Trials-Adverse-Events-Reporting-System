@@ -1,5 +1,7 @@
 ﻿@page "/Classifiers/SusarType/Index"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Administrator")]
+
 @inject IClassifierRepository<SusarType> classifierRepository
 
 <ClassifierTable Classifiers="@classifiers" ClassifierName="SusarType"></ClassifierTable>

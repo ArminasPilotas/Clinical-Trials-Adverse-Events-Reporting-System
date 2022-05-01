@@ -1,42 +1,44 @@
 ﻿@page "/{Country}/NationalRequirements/Add"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Reporter")]
+
 @if (editContext != null)
 {
-<EditForm EditContext="@editContext" OnSubmit="CreateNationalRequirement" @onreset="@Cancel">
-    <DataAnnotationsValidator />
+    <EditForm EditContext="@editContext" OnSubmit="CreateNationalRequirement" @onreset="@Cancel">
+        <DataAnnotationsValidator />
 
-    <ValidationSummary />
-    <CustomValidationBase @ref="customValidationBase" />
+        <ValidationSummary />
+        <CustomValidationBase @ref="customValidationBase" />
 
-    <InputComponent inputName="@Country" labelName="Country" readOnly="true"></InputComponent>
+        <InputComponent inputName="@Country" labelName="Country" readOnly="true"></InputComponent>
 
-    <CustomInputSelect @bind-value="@ReportingTypeId" items="@reportingTypes" labelName="Reporting Type"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@ReportingTypeId" items="@reportingTypes" labelName="Reporting Type"></CustomInputSelect>
 
-    <CustomInputSelect @bind-value="@InstitutionTypeId" items="@institutionTypes" labelName="Institution for Reporting"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@InstitutionTypeId" items="@institutionTypes" labelName="Institution for Reporting"></CustomInputSelect>
 
-    <CustomInputSelect @bind-value="@SusarTypeId" items="@susarTypes" labelName="Susar Type"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@SusarTypeId" items="@susarTypes" labelName="Susar Type"></CustomInputSelect>
 
-    <CustomInputSelect @bind-value="@CaseOriginId" items="@caseOrigins" labelName="Case Origins"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@CaseOriginId" items="@caseOrigins" labelName="Case Origins"></CustomInputSelect>
 
-    <CustomInputSelect @bind-value="@IpTypeId" items="@investigationalProductTypes" labelName="Investigational Product Types"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@IpTypeId" items="@investigationalProductTypes" labelName="Investigational Product Types"></CustomInputSelect>
 
-    <CustomInputSelect @bind-value="@ReportTypeId" items="@reportTypes" labelName="Type of report"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@ReportTypeId" items="@reportTypes" labelName="Type of report"></CustomInputSelect>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Days</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" @bind="nationalRequirement.Days" />
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Days</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" @bind="nationalRequirement.Days" />
+            </div>
         </div>
-    </div>
 
-    <CustomInputText @bind-Value="@nationalRequirement.Comments" Label="Comments"></CustomInputText>
+        <CustomInputText @bind-Value="@nationalRequirement.Comments" Label="Comments"></CustomInputText>
 
-    <div id="container">
-        <button id="button1" class="btn btn-primary" type="submit">Create</button>
-        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
-    </div>
+        <div id="container">
+            <button id="button1" class="btn btn-primary" type="submit">Create</button>
+            <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+        </div>
 
-</EditForm>
+    </EditForm>
 }
 @code {
     [Parameter]
@@ -78,10 +80,11 @@
     private CustomValidationBase customValidationBase;
     private EditContext editContext;
 
-    public int ReportingTypeId {
+    public int ReportingTypeId
+    {
         get
         {
-            if(nationalRequirement.ReportingType != null)
+            if (nationalRequirement.ReportingType != null)
             {
                 return nationalRequirement.ReportingType.Id;
             }
@@ -89,7 +92,8 @@
         }
         set => nationalRequirement.ReportingType = reportingTypes.Single(c => c.Id == value);
     }
-    public int InstitutionTypeId {
+    public int InstitutionTypeId
+    {
         get
         {
             if (nationalRequirement.InstitutionType != null)
@@ -100,7 +104,8 @@
         }
         set => nationalRequirement.InstitutionType = institutionTypes.Single(c => c.Id == value);
     }
-    public int SusarTypeId {
+    public int SusarTypeId
+    {
         get
         {
             if (nationalRequirement.SusarType != null)
@@ -111,7 +116,8 @@
         }
         set => nationalRequirement.SusarType = susarTypes.Single(c => c.Id == value);
     }
-    public int CaseOriginId {
+    public int CaseOriginId
+    {
         get
         {
             if (nationalRequirement.CaseOrigin != null)
@@ -134,7 +140,8 @@
         }
         set => nationalRequirement.InvestigationalProductType = investigationalProductTypes.Single(c => c.Id == value);
     }
-    public int ReportTypeId {
+    public int ReportTypeId
+    {
         get
         {
             if (nationalRequirement.ReportType != null)
@@ -143,7 +150,8 @@
             }
             return 0;
         }
-        set => nationalRequirement.ReportType = reportTypes.Single(c => c.Id == value); }
+        set => nationalRequirement.ReportType = reportTypes.Single(c => c.Id == value);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -166,13 +174,13 @@
         if (!NationalRequirementValidator.Validate(nationalRequirement))
         {
             errors.Add(nameof(nationalRequirement.InstitutionType),
-                new List<string>() {"Institution type field must be unique" });
+                new List<string>() { "Institution type field must be unique" });
 
             errors.Add(nameof(nationalRequirement.InvestigationalProductType),
-                new List<string>() {"Investigational Product Type field must be unique" });
+                new List<string>() { "Investigational Product Type field must be unique" });
 
             errors.Add(nameof(nationalRequirement.ReportingType),
-                new List<string>() {"Reporting type field must be unique" });
+                new List<string>() { "Reporting type field must be unique" });
 
             errors.Add(nameof(nationalRequirement.ReportType),
                 new List<string>() { "Report type field must be unique" });

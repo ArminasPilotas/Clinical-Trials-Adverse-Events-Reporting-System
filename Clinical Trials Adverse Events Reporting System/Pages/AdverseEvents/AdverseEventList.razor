@@ -1,5 +1,7 @@
 ﻿@page "/AdverseEvents/Index"
-
+@using System.IO;
+@using System.Net; 
+ 
 <NavLink>
     <a href="/AdverseEvent/Add">
         <span class="oi oi-plus" aria-hidden="true">Create Adverse Event</span>
@@ -32,7 +34,14 @@ else
                     <td>@adverseEvent.InvestigationalProductType.Name</td>
                     <td>@adverseEvent.StudyNo</td>
                     <td>@adverseEvent.OccurredOn</td>
-                    <td>Mocking Document Review</td>
+                    @if (String.IsNullOrEmpty(adverseEvent.AttachmentURL))
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                       <td>@adverseEvent.AttachmentURL</td>
+                    }
                     <td>@adverseEvent.Description</td>
                     <td>
                         @if (!reportedInstitutions.Where(c => c.AdverseEvent == adverseEvent).Any())

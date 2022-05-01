@@ -1,26 +1,28 @@
 ﻿@page "/{Country}/Authority/Edit/{Id}"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "ContactManager")]
+
 
 @if (editContext != null)
 {
-<EditForm EditContext="@editContext" OnSubmit="@UpdateAuthority" @onreset="@Cancel">
-    <DataAnnotationsValidator />
+    <EditForm EditContext="@editContext" OnSubmit="@UpdateAuthority" @onreset="@Cancel">
+        <DataAnnotationsValidator />
 
-    <ValidationSummary />
-    <CustomValidationBase @ref="customValidationBase" />
+        <ValidationSummary />
+        <CustomValidationBase @ref="customValidationBase" />
 
-    <CustomInputSelect @bind-value="@InstitutionId" labelName="Institution Name" items="@institutions"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@InstitutionId" labelName="Institution Name" items="@institutions"></CustomInputSelect>
 
-    <CustomInputSelect @bind-value="@IPTypeId" labelName="Investigational Product Type" items="@investigationalProductTypes"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@IPTypeId" labelName="Investigational Product Type" items="@investigationalProductTypes"></CustomInputSelect>
 
-    <CustomInputSelect @bind-value="@InstitutionTypeId" labelName="Institution Type" items="@institutionTypes"></CustomInputSelect>
+        <CustomInputSelect @bind-value="@InstitutionTypeId" labelName="Institution Type" items="@institutionTypes"></CustomInputSelect>
 
-    <div id="container">
-        <button id="button1" class="btn btn-primary" type="submit">Update</button>
-        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
-    </div>
+        <div id="container">
+            <button id="button1" class="btn btn-primary" type="submit">Update</button>
+            <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+        </div>
 
-</EditForm>
+    </EditForm>
 }
 
 @code {

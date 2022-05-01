@@ -15,6 +15,10 @@ using System.Threading.Tasks;
 using Syncfusion.Blazor;
 using Clinical_Trials_Adverse_Events_Reporting_System.Validation;
 using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
+using Microsoft.Extensions.Options;
+using Scope.AspNetCore;
+using Clinical_Trials_Adverse_Events_Reporting_System.Utilities;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System
 {
@@ -33,7 +37,31 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddDbContext<Entities.CTAERS>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
+            services.AddDbContext<AppDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
+            services.AddAuthentication((opts) =>
+            {
+                opts.AddScheme("DocRegScheme", builder =>
+                {
+                    builder.HandlerType = typeof(WebAppAuthHandler);
+                });
+            });
+
+            var docregconf = Configuration.GetSection("WebAppAuthConfiguration");
+
+            services.Configure<WebAppAuthConfiguration>(docregconf);
+            services.AddSingleton<WebAppAuthConfiguration>(s =>
+            s.GetRequiredService<IOptions<WebAppAuthConfiguration>>().Value);
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("SystemAuthorization", (policy) =>
+                {
+                    policy.RequireAssertion(AuthUtil.AssertSystemAuthorizationPolicy);
+                });
+            });
+
+            services.AddScoped<AuthenticationStateProvider, WebAppAuthStateProvider>();
+
             services.AddScoped(typeof(IClassifierRepository<>), typeof(ClassifierRepository<>));
             services.AddScoped<ICountryRepository,CountryRepository>();
             services.AddScoped<IInstitutionRepository,InstitutionRepository>();
@@ -69,8 +97,10 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
+            app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

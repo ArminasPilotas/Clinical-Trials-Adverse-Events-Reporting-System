@@ -1,5 +1,7 @@
 ﻿@page "/{Country}/Institution/Add"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "ContactManager")]
+
 @if (editContext != null)
 {
     <EditForm EditContext="@editContext" OnSubmit="@AddInstitution" @onreset="@Cancel">

@@ -1,5 +1,7 @@
 ﻿@page "/{Country}/Authority/Add"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "ContactManager")]
+
 @if (editContext != null)
 {
     <EditForm EditContext="@editContext" OnSubmit="@CreateAuthority" @onreset="@Cancel">
@@ -20,28 +22,28 @@
         </div>
     </EditForm>
 }
-    @code {
-        [Parameter]
-        public string Country { get; set; }
-        [Inject]
-        NavigationManager NavigationManager { get; set; }
-        [Inject]
-        IAuthorityRepository authorityRepository { get; set; }
-        [Inject]
-        ICountryRepository countryRepository { get; set; }
-        [Inject]
-        IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
-        [Inject]
-        IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
-        [Inject]
-        IInstitutionRepository institutionRepository { get; set; }
-        [Inject]
-        IValidator<Authority> AuthorityValidator { get; set; }
+@code {
+    [Parameter]
+    public string Country { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    [Inject]
+    IAuthorityRepository authorityRepository { get; set; }
+    [Inject]
+    ICountryRepository countryRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InvestigationalProductType> IPTypeRepository { get; set; }
+    [Inject]
+    IClassifierRepository<InstitutionType> institutionTypeRepository { get; set; }
+    [Inject]
+    IInstitutionRepository institutionRepository { get; set; }
+    [Inject]
+    IValidator<Authority> AuthorityValidator { get; set; }
 
 
-        Authority authority = new Authority();
+    Authority authority = new Authority();
 
-private CustomValidationBase customValidationBase;
+    private CustomValidationBase customValidationBase;
     private EditContext editContext;
 
     List<InvestigationalProductType> investigationalProductTypes { get; set; }
@@ -127,4 +129,4 @@ private CustomValidationBase customValidationBase;
     {
         NavigationManager.NavigateTo($"/{Country}/Authorities/Index");
     }
-    }
+}

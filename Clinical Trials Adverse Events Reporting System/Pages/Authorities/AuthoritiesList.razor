@@ -1,5 +1,6 @@
 ﻿@page "/{Country}/Authorities/Index"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "ContactManager")]
 
 <NavLink class="nav-link">
     <a href="/@Country/Authority/Add">
@@ -7,48 +8,48 @@
     </a>
 </NavLink>
 
-@if(authorities is null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else
-            {
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Investigational Product Type</th>
-                            <th scope="col">Institution Type</th>
-                            <th scope="col">Institution</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
+@if (authorities is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Investigational Product Type</th>
+                <th scope="col">Institution Type</th>
+                <th scope="col">Institution</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
 
-                    <tbody>
-                        @foreach(var authority in authorities)
-                {
-                    <tr>
-                        <td>@authority.Id</td>
-                        <td>@authority.InvestigationalProductType.Name</td>
-                        <td>@authority.InstitutionType.Name</td>
-                        <td>@authority.Institution.Name</td>
+        <tbody>
+            @foreach (var authority in authorities)
+            {
+                <tr>
+                    <td>@authority.Id</td>
+                    <td>@authority.InvestigationalProductType.Name</td>
+                    <td>@authority.InstitutionType.Name</td>
+                    <td>@authority.Institution.Name</td>
 
-                        <td>
-                            <a class="nav-link" href="/@Country/Authority/Edit/@authority.Id">
-                                <span class="oi oi-pencil" aria-hidden="true">Edit</span>
-                            </a>
-                            <a class="nav-link" href="/@Country/Authority/Delete/@authority.Id">
-                                <span class="oi oi-trash" aria-hidden="true">Delete</span>
-                            </a>
-                            <a class="nav-link" href="/@Country/Authority/View/@authority.Id">
-                                <span class="oi oi-eye" aria-hidden="true">View</span>
-                            </a>
-                        </td>
-                    </tr>
-                }
-                    </tbody>
-                </table>
+                    <td>
+                        <a class="nav-link" href="/@Country/Authority/Edit/@authority.Id">
+                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                        </a>
+                        <a class="nav-link" href="/@Country/Authority/Delete/@authority.Id">
+                            <span class="oi oi-trash" aria-hidden="true">Delete</span>
+                        </a>
+                        <a class="nav-link" href="/@Country/Authority/View/@authority.Id">
+                            <span class="oi oi-eye" aria-hidden="true">View</span>
+                        </a>
+                    </td>
+                </tr>
             }
+        </tbody>
+    </table>
+}
 
 @code {
     [Inject]

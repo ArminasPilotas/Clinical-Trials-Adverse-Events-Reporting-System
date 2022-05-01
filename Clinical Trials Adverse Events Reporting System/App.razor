@@ -1,4 +1,4 @@
-﻿
+﻿<!--
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -9,3 +9,37 @@
         </LayoutView>
     </NotFound>
 </Router>
+-->
+
+<CascadingAuthenticationState>
+    <AuthorizeView Policy="@(Policy ?? defaultPolicy)">
+        <Authorized Context="Auth">
+            <Router AppAssembly="@typeof(Program).Assembly">
+                <Found Context="routeData">
+                    <AuthorizeRouteView RouteData="@routeData" Resource="routeData" DefaultLayout="@typeof(MainLayout)" />
+                </Found>
+                <NotFound>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        Not found
+                    </LayoutView>
+                </NotFound>
+            </Router>
+        </Authorized>
+        <NotAuthorized>
+            <p>Access Denied</p>
+        </NotAuthorized>
+    </AuthorizeView>
+
+
+
+
+</CascadingAuthenticationState>
+
+
+
+
+@code{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Policy { get; set; }
+    private string defaultPolicy = "SystemAuthorization";
+}

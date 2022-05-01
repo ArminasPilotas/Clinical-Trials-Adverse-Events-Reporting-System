@@ -1,5 +1,6 @@
 ﻿@page "/{Country}/Authority/View/{Id}"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "ContactManager")]
 
 @if (authority is null)
 {
@@ -7,27 +8,27 @@
 }
 else
 {
-<form>
+    <form>
 
-    <InputComponent inputName="@authority.Country.Name" labelName="Country" readOnly="true"></InputComponent>
+        <InputComponent inputName="@authority.Country.Name" labelName="Country" readOnly="true"></InputComponent>
 
-    <InputComponent inputName="@authority.Institution.Name" labelName="Institution" readOnly="true"></InputComponent>
+        <InputComponent inputName="@authority.Institution.Name" labelName="Institution" readOnly="true"></InputComponent>
 
-    <InputComponent inputName="@authority.InstitutionType.Name" labelName="Institution Type" readOnly="true"></InputComponent>
+        <InputComponent inputName="@authority.InstitutionType.Name" labelName="Institution Type" readOnly="true"></InputComponent>
 
-    <InputComponent inputName="@authority.InvestigationalProductType.Name" labelName="Investigational Product Type" readOnly="true"></InputComponent>
+        <InputComponent inputName="@authority.InvestigationalProductType.Name" labelName="Investigational Product Type" readOnly="true"></InputComponent>
 
-    <InputComponent inputName="@authority.Author" labelName="Author" readOnly="true"></InputComponent>
+        <InputComponent inputName="@authority.Author" labelName="Author" readOnly="true"></InputComponent>
 
-    <InputComponent inputName="@authority.Editor" labelName="Editor" readOnly="true"></InputComponent>
+        <InputComponent inputName="@authority.Editor" labelName="Editor" readOnly="true"></InputComponent>
 
-    <InputComponent inputName="@authority.Created.ToString()" labelName="Created" readOnly="true"></InputComponent>
+        <InputComponent inputName="@authority.Created.ToString()" labelName="Created" readOnly="true"></InputComponent>
 
-    <InputComponent inputName="@authority.Modified.ToString()" labelName="Modified" readOnly="true"></InputComponent>
+        <InputComponent inputName="@authority.Modified.ToString()" labelName="Modified" readOnly="true"></InputComponent>
 
-    <ButtonComponent buttonText="Cancel" buttonType="button" buttonStyle="danger" onButtonClick="Cancel"></ButtonComponent>
+        <ButtonComponent buttonText="Cancel" buttonType="button" buttonStyle="danger" onButtonClick="Cancel"></ButtonComponent>
 
-</form>
+    </form>
 }
 
 @code {

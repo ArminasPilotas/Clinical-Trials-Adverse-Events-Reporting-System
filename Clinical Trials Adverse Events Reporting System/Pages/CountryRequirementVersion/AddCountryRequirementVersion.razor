@@ -1,46 +1,48 @@
 ﻿@page "/{Country}/CountryRequirementsVersion/Add"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Reporter")]
+
 @if (editContext != null)
 {
-<EditForm EditContext="@editContext" OnSubmit="@CreateCountryRequirementVersion" @onreset="@Cancel">
+    <EditForm EditContext="@editContext" OnSubmit="@CreateCountryRequirementVersion" @onreset="@Cancel">
 
-    <DataAnnotationsValidator />
+        <DataAnnotationsValidator />
 
-    <ValidationSummary />
-    <CustomValidationBase @ref="customValidationBase" />
+        <ValidationSummary />
+        <CustomValidationBase @ref="customValidationBase" />
 
-    <InputComponent @bind-inputName="@Country" labelName="Country" readOnly="true"></InputComponent>
+        <InputComponent @bind-inputName="@Country" labelName="Country" readOnly="true"></InputComponent>
 
-    <CustomInputSelect @bind-value="IPTypeId" items="@investigationalProductTypes" labelName="Investigational Product Type"></CustomInputSelect>
+        <CustomInputSelect @bind-value="IPTypeId" items="@investigationalProductTypes" labelName="Investigational Product Type"></CustomInputSelect>
 
-    <CustomInputText @bind-Value="@countryRequirementVersion.RequirementVersion" Label="Requirement Version"></CustomInputText>
+        <CustomInputText @bind-Value="@countryRequirementVersion.RequirementVersion" Label="Requirement Version"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Date Of Renewal</label>
-        <div class="col-sm-10">
-            <SfDatePicker TValue="DateTime" @bind-Value="@countryRequirementVersion.DateOfRenewal" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false">
-                <DatePickerEvents TValue="DateTime" ValueChange="@RenewalValueChanged"></DatePickerEvents>
-            </SfDatePicker>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Date Of Renewal</label>
+            <div class="col-sm-10">
+                <SfDatePicker TValue="DateTime" @bind-Value="@countryRequirementVersion.DateOfRenewal" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false">
+                    <DatePickerEvents TValue="DateTime" ValueChange="@RenewalValueChanged"></DatePickerEvents>
+                </SfDatePicker>
+            </div>
         </div>
-    </div>
 
-    <CustomInputText @bind-Value="@countryRequirementVersion.ContactVersion" Label="Contact Version"></CustomInputText>
+        <CustomInputText @bind-Value="@countryRequirementVersion.ContactVersion" Label="Contact Version"></CustomInputText>
 
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Contact Revision Date</label>
-        <div class="col-sm-10">
-            <SfDatePicker TValue="DateTime" @bind-Value="@countryRequirementVersion.ContactRevisionDate" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false">
-                <DatePickerEvents TValue="DateTime" ValueChange="@ContactRevisionValueChanged"></DatePickerEvents>
-            </SfDatePicker>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Contact Revision Date</label>
+            <div class="col-sm-10">
+                <SfDatePicker TValue="DateTime" @bind-Value="@countryRequirementVersion.ContactRevisionDate" Max="DateTime.Now" Min="DateTime.Now.AddYears(-20)" Placeholder="Select a date" AllowEdit="false">
+                    <DatePickerEvents TValue="DateTime" ValueChange="@ContactRevisionValueChanged"></DatePickerEvents>
+                </SfDatePicker>
+            </div>
         </div>
-    </div>
 
-    <div id="container">
-        <button id="button1" class="btn btn-primary" type="submit">Create</button>
-        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
-    </div>
+        <div id="container">
+            <button id="button1" class="btn btn-primary" type="submit">Create</button>
+            <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+        </div>
 
-</EditForm>
+    </EditForm>
 }
 
 @code {
@@ -64,10 +66,11 @@
 
     public CountryRequirementVersion countryRequirementVersion;
 
-    public int IPTypeId {
+    public int IPTypeId
+    {
         get
         {
-            if(countryRequirementVersion.InvestigationalProductType != null)
+            if (countryRequirementVersion.InvestigationalProductType != null)
             {
                 return countryRequirementVersion.InvestigationalProductType.Id;
             }

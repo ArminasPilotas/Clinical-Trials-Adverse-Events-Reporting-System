@@ -1,5 +1,7 @@
 ﻿@page "/Classifiers/ReportType/Index"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Administrator")]
+
 @inject IClassifierRepository<ReportType> classifierRepository
 
 <ClassifierTable Classifiers="@classifiers" ClassifierName="ReportType"></ClassifierTable>

@@ -1,5 +1,7 @@
 ﻿@page "/{Country}/Institution/Edit/{Id}"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "ContactManager")]
+
 
 @if (editContext != null)
 {

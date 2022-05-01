@@ -1,32 +1,34 @@
 ﻿@page "/ReportType/{Action}"
 @page "/ReportType/{Action}/{Id}"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Administrator")]
+
 @inject IClassifierRepository<ReportType> classifierRepository
 @inject NavigationManager NavigationManager
 
 @if (Action != "Delete" && editContext != null)
 {
-<EditForm EditContext="@editContext" OnSubmit="@OnValidSubmit" @onreset="@Cancel">
+    <EditForm EditContext="@editContext" OnSubmit="@OnValidSubmit" @onreset="@Cancel">
 
-    <DataAnnotationsValidator />
+        <DataAnnotationsValidator />
 
-    <ValidationSummary />
-    <CustomValidationBase @ref="customValidationBase" />
+        <ValidationSummary />
+        <CustomValidationBase @ref="customValidationBase" />
 
-    <CustomInputText @bind-Value="@classifier.Name" Label="Name"></CustomInputText>
+        <CustomInputText @bind-Value="@classifier.Name" Label="Name"></CustomInputText>
 
-    @if (Action == "Edit")
-    {
-        <CustomInputText @bind-Value="@classifier.ModifyReason" Label="Modify Reason"></CustomInputText>
-        <ButtonComponent buttonStyle="primary" buttonText="Update" buttonType="submit"></ButtonComponent>
-    }
-    @if (Action == "Create")
-    {
-        <ButtonComponent buttonStyle="primary" buttonText="Create" buttonType="submit"></ButtonComponent>
-    }
-    <ButtonComponent buttonStyle="danger" buttonText="Cancel" buttonType="reset"></ButtonComponent>
+        @if (Action == "Edit")
+        {
+            <CustomInputText @bind-Value="@classifier.ModifyReason" Label="Modify Reason"></CustomInputText>
+            <ButtonComponent buttonStyle="primary" buttonText="Update" buttonType="submit"></ButtonComponent>
+        }
+        @if (Action == "Create")
+        {
+            <ButtonComponent buttonStyle="primary" buttonText="Create" buttonType="submit"></ButtonComponent>
+        }
+        <ButtonComponent buttonStyle="danger" buttonText="Cancel" buttonType="reset"></ButtonComponent>
 
-</EditForm>
+    </EditForm>
 }
 
 

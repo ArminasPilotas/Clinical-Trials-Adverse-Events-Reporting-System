@@ -1,6 +1,8 @@
 ﻿@page "/InvestigationalProductType/{Action}"
 @page "/InvestigationalProductType/{Action}/{Id}"
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "Administrator")]
+
 @inject IClassifierRepository<InvestigationalProductType> classifierRepository
 @inject NavigationManager NavigationManager
 
@@ -9,6 +11,7 @@
     <EditForm EditContext="@editContext" OnSubmit="@OnValidSubmit" @onreset="@Cancel">
 
         <DataAnnotationsValidator />
+        <CustomValidationBase @ref="customValidationBase" />
 
         <CustomInputText @bind-Value="@classifier.Name" Label="Name"></CustomInputText>
 

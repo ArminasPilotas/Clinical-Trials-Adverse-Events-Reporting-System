@@ -1,6 +1,8 @@
 ﻿@page "/AdverseEvent/Add";
 @using System.IO; 
 
+@attribute [Authorize(Policy = "SystemAuthorization", Roles = "CRO")]
+
 @if (editContext != null)
 {
 <EditForm EditContext="@editContext" OnSubmit="@CreateAdverseEvent" @onreset="@Cancel">
