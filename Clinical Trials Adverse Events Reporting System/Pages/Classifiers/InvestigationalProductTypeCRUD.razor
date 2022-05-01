@@ -13,25 +13,31 @@
 
 @if (Action != "Delete" && editContext != null)
 {
-    <EditForm EditContext="@editContext" OnSubmit="@OnValidSubmit" @onreset="@Cancel">
+<EditForm EditContext="@editContext" OnSubmit="@OnValidSubmit" @onreset="@Cancel">
 
-        <DataAnnotationsValidator />
-        <CustomValidationBase @ref="customValidationBase" />
+    <DataAnnotationsValidator />
+    <CustomValidationBase @ref="customValidationBase" />
 
-        <CustomInputText @bind-Value="@classifier.Name" Label="Name"></CustomInputText>
+    <CustomInputText @bind-Value="@classifier.Name" Label="Name"></CustomInputText>
 
-        @if (Action == "Edit")
-        {
-            <CustomInputText @bind-Value="@classifier.ModifyReason" Label="Modify Reason"></CustomInputText>
-            <ButtonComponent buttonStyle="primary" buttonText="Update" buttonType="submit"></ButtonComponent>
-        }
-        @if (Action == "Create")
-        {
-            <ButtonComponent buttonStyle="primary" buttonText="Create" buttonType="submit"></ButtonComponent>
-        }
-        <ButtonComponent buttonStyle="danger" buttonText="Cancel" buttonType="reset"></ButtonComponent>
+    @if (Action == "Edit")
+    {
+        <CustomInputText @bind-Value="@classifier.ModifyReason" Label="Modify Reason"></CustomInputText>
 
-    </EditForm>
+        <div id="container">
+            <button id="button1" class="btn btn-primary" type="submit">Update</button>
+            <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+        </div>
+    }
+    @if (Action == "Create")
+    {
+        <div id="container">
+            <button id="button1" class="btn btn-primary" type="submit">Create</button>
+            <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+        </div>
+    }
+
+</EditForm>
 }
 
 
