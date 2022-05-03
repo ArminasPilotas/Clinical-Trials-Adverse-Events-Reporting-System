@@ -12,9 +12,9 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
     /// </summary>
     public class InstitutionRepository : IInstitutionRepository
     {
-        private readonly CTAERS _dbContext;
+        private readonly AppDbContext _dbContext;
 
-        public InstitutionRepository(CTAERS dbContext)
+        public InstitutionRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }

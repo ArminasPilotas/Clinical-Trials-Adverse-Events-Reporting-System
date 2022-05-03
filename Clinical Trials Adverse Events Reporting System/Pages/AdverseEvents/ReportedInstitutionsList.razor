@@ -82,7 +82,7 @@ else
     [Inject]
     IReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
     private List<int> CheckedValues { get; set; }
-    //private Mailer mailer;
+    private Mailer mailer;
     public bool ForceReportDialogOpen { get; set; }
     public bool ReportByEmailDialogOpen { get; set; }
 
@@ -92,7 +92,7 @@ else
     {
         reportedInstitutions = await Task.Run(() => ReportedInstitutionRepository.GetByAdverseEvent(Convert.ToInt32(AdverseEventId)));
         CheckedValues = new List<int>();
-        // mailer = new Mailer();
+        //mailer = new Mailer();
     }
 
     private void CheckboxClicked(int Id, object checkedValue)
@@ -141,7 +141,7 @@ else
             {
                 await Task.Run(() => ReportedInstitutionRepository.Update(reportedInstitutions.FirstOrDefault(c => c.Id == checkedBoxes)));
             }
-            //mailer.SendEmail("arminas.pilotas@gmail.com", "Arminas", "AdverseEventTEST", "NO");
+            //mailer.SendEmail("arminas.pilotas@gmail.com", "Arminas", "Institution1", "SAKFDKS","Amatu g. 432, Vilnius","Lietuva", "SADR", "2" , "RE-249532", "Serious adverse event by medicinal device");
             CheckedValues.Clear();
         }
         ReportByEmailDialogOpen = false;

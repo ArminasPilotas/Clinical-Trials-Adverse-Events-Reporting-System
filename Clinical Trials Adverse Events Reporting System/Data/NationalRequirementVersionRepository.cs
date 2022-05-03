@@ -12,9 +12,9 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
     /// </summary>
     public class NationalRequirementVersionRepository : INationalRequirementVersionRepository
     {
-        private readonly CTAERS _dbContext;
+        private readonly AppDbContext _dbContext;
 
-        public NationalRequirementVersionRepository(CTAERS dbContext)
+        public NationalRequirementVersionRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -22,12 +22,12 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
         /// <summary>
         /// Method adds national requirement version object to the database
         /// </summary>
-        /// <param name="nationalRequirementCountryRequirementVersion"></param>
+        /// <param name="nationalRequirementVersion"></param>
         /// <returns></returns>
-        public async Task Create(NationalRequirementVersion nationalRequirementCountryRequirementVersion)
+        public async Task Create(NationalRequirementVersion nationalRequirementVersion)
         {
-            nationalRequirementCountryRequirementVersion.Created = DateTime.UtcNow;
-            await _dbContext.AddAsync(nationalRequirementCountryRequirementVersion);
+            nationalRequirementVersion.Created = DateTime.UtcNow;
+            await _dbContext.AddAsync(nationalRequirementVersion);
             await _dbContext.SaveChangesAsync();
         }
         

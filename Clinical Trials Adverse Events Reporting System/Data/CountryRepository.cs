@@ -12,9 +12,9 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
     /// </summary>
     public class CountryRepository : ICountryRepository
     {
-        private readonly CTAERS _dbContext;
+        private readonly AppDbContext _dbContext;
 
-        public CountryRepository(CTAERS dbContext)
+        public CountryRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }

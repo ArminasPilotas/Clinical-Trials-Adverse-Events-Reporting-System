@@ -12,9 +12,9 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
     /// </summary>
     public class ReportedInstitutionRepository : IReportedInstitutionRepository
     {
-        public readonly CTAERS _dbContext;
+        public readonly AppDbContext _dbContext;
 
-        public ReportedInstitutionRepository(CTAERS dbContext)
+        public ReportedInstitutionRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -47,7 +47,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
                     .Where(natReq => natReq.InstitutionType.Id == institution.InstitutionType.Id
                     && natReq.InvestigationalProductType.Id == adverseEvent.InvestigationalProductType.Id
                     && natReq.Country.Id == institution.Country.Id
-                    && natReq.Valid == true)
+                    && natReq.Valid)
                     .FirstOrDefaultAsync();
 
                 if (nationalRequirement != null)
@@ -76,12 +76,12 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
         /// <summary>
         /// Method helps to get reported institutions based by adverse event Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="adverseEventId"></param>
         /// <returns></returns>
-        public async Task<List<ReportedInstitution>> GetByAdverseEvent(int id)
+        public async Task<List<ReportedInstitution>> GetByAdverseEvent(int adverseEventId)
         {
             return await _dbContext.ReportedInstitutions
-                .Where(c => c.AdverseEvent.Id == id)
+                .Where(c => c.AdverseEvent.Id == adverseEventId)
                 .Include(c => c.Institution.Country)
                 .Include(c => c.Institution.InstitutionType                )
                 .ToListAsync();

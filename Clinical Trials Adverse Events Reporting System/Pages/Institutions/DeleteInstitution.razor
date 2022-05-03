@@ -59,6 +59,8 @@ else
     IInstitutionRepository institutionRepository { get; set; }
     [Inject]
     NavigationManager NavigationManager { get; set; }
+    [Inject]
+    IUnitOfWork UnitOfWork { get; set; }
 
     public Institution institution { get; set; }
     private bool showErrorDialog;
@@ -72,11 +74,20 @@ else
     {
         try
         {
+            await this.UnitOfWork.BeginTransactionAsync();
+
             await institutionRepository.Delete(institution);
+
+            await this.UnitOfWork.CommitAsync();
+            await this.UnitOfWork.CloseTransactionAsync();
+
             NavigationManager.NavigateTo($"{Country}/Institution/Index");
         }
         catch
         {
+            await this.UnitOfWork.RollbackAsync();
+            await this.UnitOfWork.CloseTransactionAsync();
+
             showErrorDialog = true;
             StateHasChanged();
         }

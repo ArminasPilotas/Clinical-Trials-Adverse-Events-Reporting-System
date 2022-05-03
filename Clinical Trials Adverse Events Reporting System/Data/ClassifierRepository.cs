@@ -14,9 +14,9 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
     public class ClassifierRepository<TEntity> : IClassifierRepository<TEntity>
         where TEntity : Classifier
     {
-        private readonly CTAERS _dbContext;
+        private readonly AppDbContext _dbContext;
 
-        public ClassifierRepository(CTAERS dbContext)
+        public ClassifierRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -41,6 +41,12 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
             _dbContext.Set<TEntity>().Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
+
+        public void DeleteUnitOfWork(TEntity entity)
+        {
+            _dbContext.Set<TEntity>().Remove(entity);
+        }
+
         /// <summary>
         /// Gets all classifiers based by TEntity from the database
         /// </summary>
@@ -58,6 +64,12 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
         {
             return await _dbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
         }
+
+        public AppDbContext GetDbContext()
+        {
+            return _dbContext;
+        }
+
         /// <summary>
         /// Method updates classifier object in the database
         /// </summary>

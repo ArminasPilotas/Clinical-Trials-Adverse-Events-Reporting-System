@@ -16,7 +16,6 @@ using Syncfusion.Blazor;
 using Clinical_Trials_Adverse_Events_Reporting_System.Validation;
 using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
 using Microsoft.Extensions.Options;
-using Scope.AspNetCore;
 using Clinical_Trials_Adverse_Events_Reporting_System.Utilities;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -37,7 +36,9 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddDbContext<AppDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
+            services.AddDbContext<AppDbContext>(item => item
+                .UseSqlServer(Configuration.GetConnectionString("myconn"))
+                .LogTo(Console.WriteLine));
             services.AddAuthentication((opts) =>
             {
                 opts.AddScheme("DocRegScheme", builder =>
@@ -78,6 +79,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System
             services.AddScoped(typeof(IValidator<NationalRequirement>), typeof(NationalRequirementValidator));
             services.AddScoped<IAdverseEventRepository,AdverseEventRepository>();
             services.AddScoped<IReportedInstitutionRepository,ReportedInstitutionRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

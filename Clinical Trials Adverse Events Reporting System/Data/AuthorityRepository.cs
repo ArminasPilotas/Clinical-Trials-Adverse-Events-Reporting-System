@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 {
@@ -12,9 +13,9 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
     /// </summary>
     public class AuthorityRepository : IAuthorityRepository
     {
-        public readonly CTAERS _dbContext;
+        public readonly AppDbContext _dbContext;
 
-        public AuthorityRepository(CTAERS dbContext)
+        public AuthorityRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }

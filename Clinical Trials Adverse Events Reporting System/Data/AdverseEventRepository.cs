@@ -1,5 +1,6 @@
 ﻿using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
     /// </summary>
     public class AdverseEventRepository : IAdverseEventRepository
     {
-        public readonly CTAERS _dbContext;
+        public readonly AppDbContext _dbContext;
+        private readonly ILogger _logger;
 
-        public AdverseEventRepository(CTAERS dbContext)
+        public AdverseEventRepository(AppDbContext dbContext, ILogger<AdverseEventRepository> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
         /// <summary>
         /// Method adds adverse event object to the database
@@ -27,6 +30,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
         {
             await _dbContext.AddAsync(adverseEvent);
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Adverse Event is created");
         }
         /// <summary>
         /// Method helps to get adverse event from database based by Id
