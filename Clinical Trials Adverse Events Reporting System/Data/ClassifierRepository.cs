@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 {
@@ -15,6 +16,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
         where TEntity : Classifier
     {
         private readonly AppDbContext _dbContext;
+        private IDbContextTransaction transaction;
 
         public ClassifierRepository(AppDbContext dbContext)
         {
@@ -38,8 +40,20 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
         /// <returns></returns>
         public async Task Delete(TEntity entity)
         {
-            _dbContext.Set<TEntity>().Remove(entity);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                transaction = await this._dbContext.Database.BeginTransactionAsync();
+                _dbContext.Set<TEntity>().Remove(entity);
+
+                await this.transaction.CommitAsync();
+                await this.transaction.DisposeAsync();
+                await this._dbContext.SaveChangesAsync();
+            }
+            catch
+            {
+                await this.transaction.RollbackAsync();
+                await this.transaction.DisposeAsync();
+            }
         }
 
         public void DeleteUnitOfWork(TEntity entity)

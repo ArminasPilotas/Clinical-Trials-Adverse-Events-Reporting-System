@@ -52,8 +52,6 @@
     public string Id { get; set; }
     [Inject]
     IValidator<InstitutionType> ClassifierValidator { get; set; }
-    [Inject]
-    IUnitOfWork UnitOfWork { get; set; }
 
     InstitutionType classifier = new InstitutionType();
 
@@ -124,20 +122,11 @@
     {
         try
         {
-            await this.UnitOfWork.BeginTransactionAsync();
-
             await classifierRepository.Delete(classifier);
-
-            await this.UnitOfWork.CommitAsync();
-            await this.UnitOfWork.CloseTransactionAsync();
-
             NavigationManager.NavigateTo("Classifiers/InstitutionType/Index");
         }
         catch
         {
-            await this.UnitOfWork.RollbackAsync();
-            await this.UnitOfWork.CloseTransactionAsync();
-
             showErrorDialog = true;
             StateHasChanged();
         }

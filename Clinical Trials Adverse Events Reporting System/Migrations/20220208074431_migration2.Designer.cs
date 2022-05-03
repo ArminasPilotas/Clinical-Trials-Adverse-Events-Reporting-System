@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Migrations
 {
-    [DbContext(typeof(CTAERS))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20220208074431_migration2")]
     partial class migration2
     {

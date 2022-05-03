@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Clinical_Trials_Adverse_Events_Reporting_System.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
 {
@@ -13,6 +14,7 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
     public class InstitutionRepository : IInstitutionRepository
     {
         private readonly AppDbContext _dbContext;
+        private IDbContextTransaction transaction;
 
         public InstitutionRepository(AppDbContext dbContext)
         {
@@ -38,8 +40,21 @@ namespace Clinical_Trials_Adverse_Events_Reporting_System.Data
         /// <returns></returns>
         public async Task Delete(Institution institution)
         {
-            _dbContext.Remove(institution);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                transaction = await this._dbContext.Database.BeginTransactionAsync();
+
+                _dbContext.Remove(institution);
+
+                await this.transaction.CommitAsync();
+                await this.transaction.DisposeAsync();
+                await _dbContext.SaveChangesAsync();
+            }
+            catch
+            {
+                await this.transaction.RollbackAsync();
+                await this.transaction.DisposeAsync();
+            }
         }
 
         /// <summary>

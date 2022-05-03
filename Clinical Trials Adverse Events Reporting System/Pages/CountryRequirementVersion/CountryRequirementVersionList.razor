@@ -64,8 +64,6 @@ else
     ICountryRequirementVersionRepository countryRequirementVersionRepository { get; set; }
     [Inject]
     INationalRequirementVersionRepository NationalRequirementVersionRepository { get; set; }
-    [Inject]
-    IUnitOfWork UnitOfWork { get; set; }
 
     List<CountryRequirementVersion> countryRequirementVersions;
     List<NationalRequirementVersion> nationalRequirementVersions;
@@ -82,20 +80,12 @@ else
     {
         try
         {
-            await this.UnitOfWork.BeginTransactionAsync();
-
             await countryRequirementVersionRepository.Delete(countryRequirementVersion);
             countryRequirementVersions.Remove(countryRequirementVersion);
-
-            await this.UnitOfWork.CommitAsync();
-            await this.UnitOfWork.CloseTransactionAsync();
             StateHasChanged();
         }
         catch
         {
-            await this.UnitOfWork.RollbackAsync();
-            await this.UnitOfWork.CloseTransactionAsync();
-
             showErrorDialog = true;
             StateHasChanged();
         }
