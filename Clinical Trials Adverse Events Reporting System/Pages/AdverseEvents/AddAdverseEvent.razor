@@ -119,10 +119,10 @@
 
     private void OnInputFileChange(InputFileChangeEventArgs e)
     {
-        long maxFileSize = 1024 * 1024;
+        long maxFileSize = 1024 * 1024 * 20;
         if (e.File.Size <= maxFileSize && (e.File.Name.Contains(".docx") || e.File.Name.Contains(".pdf")))
         {
-            file = e.File;
+            file = e.File;          
             adverseEvent.AttachmentURL = e.File.Name;
         }
     }
