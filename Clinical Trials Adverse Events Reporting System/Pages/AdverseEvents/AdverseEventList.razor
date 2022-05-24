@@ -15,6 +15,7 @@
 }
 else
 {
+    <h3 class="text-center">Adverse Events</h3>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -35,7 +36,7 @@ else
                     <td>@adverseEvent.Id</td>
                     <td>@adverseEvent.InvestigationalProductType.Name</td>
                     <td>@adverseEvent.StudyNo</td>
-                    <td>@adverseEvent.OccurredOn</td>
+                    <td>@adverseEvent.OccurredOn.ToShortDateString()</td>
                     @if (String.IsNullOrEmpty(adverseEvent.AttachmentURL))
                     {
                         <td></td>

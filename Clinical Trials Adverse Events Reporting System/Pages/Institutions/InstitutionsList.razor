@@ -14,17 +14,17 @@
 }
 else
 {
+    <h2 class="text-center">@Country Institutions</h2>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Institution Type</th>
                 <th scope="col">Institution Name</th>
-                <th scope="col">Author</th>
-                <th scope="col">Editor</th>
-                <th scope="col">Created At</th>
-                <th scope="col">Modified At</th>
-                <th scope="col">Modify Reason</th>
+                <th scope="col">Address</th>
+                <th scope="col">City</th>
+                <th scope="col">Registration Number</th>
+                <th scope="col">Study Number</th>
                 <td scope="col"></td>
             </tr>
         </thead>
@@ -36,11 +36,10 @@ else
                     <td>@institution.Id</td>
                     <td>@institution.InstitutionType.Name</td>
                     <td>@institution.Name</td>
-                    <td>@institution.Author</td>
-                    <td>@institution.Editor</td>
-                    <td>@institution.Created</td>
-                    <td>@institution.Modified</td>
-                    <td>@institution.ModifyReason</td>
+                    <td>@institution.Address</td>
+                    <td>@institution.City</td>
+                    <td>@institution.RegNo</td>
+                    <td>@institution.StudyNumber</td>
 
                     <td>
                         <a class="nav-link" href="/@Country/Institution/View/@institution.Id">

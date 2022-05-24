@@ -5,50 +5,52 @@
 
 @if (editContext != null)
 {
-    <EditForm EditContext="@editContext" OnSubmit="@UpdateInstitution" @onreset="@Cancel">
-        <DataAnnotationsValidator />
+<EditForm EditContext="@editContext" OnSubmit="@UpdateInstitution" @onreset="@Cancel">
+    <DataAnnotationsValidator />
 
-        <ValidationSummary />
-        <CustomValidationBase @ref="customValidationBase" />
+    <ValidationSummary />
+    <CustomValidationBase @ref="customValidationBase" />
 
-        <CustomInputText @bind-Value="@institution.Name" Label="Institution Name"> </CustomInputText>
+    <CustomInputText @bind-Value="@institution.Name" Label="Institution Name"> </CustomInputText>
 
-        <CustomInputSelect @bind-value="@InstitutionTypeId" labelName="Institution Type" items="@institutionTypes"></CustomInputSelect>
+    <CustomInputSelect @bind-value="@InstitutionTypeId" labelName="Institution Type" items="@institutionTypes"></CustomInputSelect>
 
-        <CustomInputText @bind-Value="@institution.Address" Label="Address"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.Address" Label="Address"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.Phone" Label="Phone"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.Phone" Label="Phone"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.Fax" Label="Fax"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.Fax" Label="Fax"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.Email" Label="Email"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.Email" Label="Email"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.AlternateAddress" Label="Alternate Address"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.AlternateAddress" Label="Alternate Address"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.AlternatePhone" Label="Alternate Phone"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.AlternatePhone" Label="Alternate Phone"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.AlternateFax" Label="Alternate Fax"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.AlternateFax" Label="Alternate Fax"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.AlternateEmail" Label="Alternate Email"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.AlternateEmail" Label="Alternate Email"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.City" Label="City"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.City" Label="City"></CustomInputText>
 
-        <CustomInputText @bind-Value="@institution.RegNo" Label="Registration Number"></CustomInputText>
+    <CustomInputText @bind-Value="@institution.RegNo" Label="Registration Number"></CustomInputText>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Modify Reason</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" @bind="institution.ModifyReason" />
-            </div>
+    <CustomInputText @bind-Value="@institution.StudyNumber" Label="Study Number"></CustomInputText>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Modify Reason</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" @bind="institution.ModifyReason" />
         </div>
+    </div>
 
 
-        <div id="container">
-            <button id="button1" class="btn btn-primary" type="submit">Update</button>
-            <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
-        </div>
+    <div id="container">
+        <button id="button1" class="btn btn-primary" type="submit">Update</button>
+        <button id="button2" class="btn btn-danger" type="reset">Cancel</button>
+    </div>
 
-    </EditForm>
+</EditForm>
 }
 
 @code {

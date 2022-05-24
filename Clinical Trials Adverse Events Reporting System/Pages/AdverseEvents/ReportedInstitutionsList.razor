@@ -8,6 +8,7 @@
 }
 else
 {
+    <h2 class="text-center">Reporting Institutions</h2>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -81,10 +82,13 @@ else
     public string AdverseEventId { get; set; }
     [Inject]
     IReportedInstitutionRepository ReportedInstitutionRepository { get; set; }
+    [Inject]
+    IAdverseEventRepository AdverseEventRepository { get; set; }
     private List<int> CheckedValues { get; set; }
     private Mailer mailer;
     public bool ForceReportDialogOpen { get; set; }
     public bool ReportByEmailDialogOpen { get; set; }
+    public AdverseEvent adverseEvent { get; set; }
 
     List<ReportedInstitution> reportedInstitutions;
 
@@ -92,7 +96,8 @@ else
     {
         reportedInstitutions = await Task.Run(() => ReportedInstitutionRepository.GetByAdverseEvent(Convert.ToInt32(AdverseEventId)));
         CheckedValues = new List<int>();
-        //mailer = new Mailer();
+        mailer = new Mailer();
+        adverseEvent = await Task.Run(() => AdverseEventRepository.GetById(Convert.ToInt32(AdverseEventId)));
     }
 
     private void CheckboxClicked(int Id, object checkedValue)
@@ -139,9 +144,19 @@ else
         {
             foreach (var checkedBoxes in CheckedValues)
             {
+                ReportedInstitution institutiontoReport = reportedInstitutions.Where(c => c.Id == checkedBoxes).FirstOrDefault();
+                mailer.SendEmail(institutiontoReport.Institution.Email,
+                "Adverse Event Id: "+ AdverseEventId,
+                institutiontoReport.Institution.Name,
+                institutiontoReport.Institution.RegNo,
+                institutiontoReport.Institution.Address + ", " + institutiontoReport.Institution.City,
+                institutiontoReport.Institution.City,
+                "adverse event",
+                AdverseEventId,
+                institutiontoReport.Institution.StudyNumber,
+                adverseEvent.Description);
                 await Task.Run(() => ReportedInstitutionRepository.Update(reportedInstitutions.FirstOrDefault(c => c.Id == checkedBoxes)));
             }
-            //mailer.SendEmail("arminas.pilotas@gmail.com", "Arminas", "Institution1", "SAKFDKS","Amatu g. 432, Vilnius","Lietuva", "SADR", "2" , "RE-249532", "Serious adverse event by medicinal device");
             CheckedValues.Clear();
         }
         ReportByEmailDialogOpen = false;

@@ -15,10 +15,11 @@
 }
 else
 {
+    <h2 class="text-center">@Country National Requirements</h2>
     <label>Show Inactive</label>
     <input type="checkbox" @onchange="@InactiveValueChanged" />
 
-    <button type="button" class="btn btn-secondary btn-lg" @onclick="CompleteVersionRenewal">Complete Renewal</button>
+    <button type="button" class="btn btn-secondary btn-sm ml-2" @onclick="CompleteVersionRenewal">Complete Renewal</button>
 
     <table class="table table-bordered table-hover">
         <thead>
@@ -65,15 +66,12 @@ else
                     }
 
                     <td>
-                        <a class="nav-link" href="/@Country/NationalRequirement/View/@nationalRequirement.Id">
-                            <span class="oi oi-eye" aria-hidden="true">View</span>
+                        @if (nationalRequirement.Valid)
+                        {
+                        <a class="nav-link" @onclick="() => DeactivateNationalRequirement(nationalRequirement)">
+                            <span class="oi oi-trash" aria-hidden="true">Deactivate</span>
                         </a>
-                        <a class="nav-link" href="/@Country/NationalRequirement/Edit/@nationalRequirement.Id">
-                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
-                        </a>
-                        <a class="nav-link" href="/@Country/NationalRequirement/Delete/@nationalRequirement.Id">
-                            <span class="oi oi-eye" aria-hidden="true">Delete</span>
-                        </a>
+                        }
                     </td>
                 </tr>
             }
@@ -146,6 +144,14 @@ else
         {
             nationalRequirementsFilter = nationalRequirements;
         }
+        StateHasChanged();
+    }
+
+    private async Task DeactivateNationalRequirement(NationalRequirement nationalRequirement)
+    {
+        nationalRequirement.Valid = false;
+        await Task.Run(() => nationalRequirementsRepository.Update(nationalRequirement));
+        nationalRequirementsFilter = nationalRequirements.Where(e => e.Valid == true).ToList();
         StateHasChanged();
     }
 }
